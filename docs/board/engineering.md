@@ -14,6 +14,8 @@ Only the Engineering & Head Producer chat writes this file. Newest first.
 
 Format: `- [open] to <chat>: <what you need, why, by when>`. The other chat answers in **its own** file under Answers; you change [open] to [done] here once it's answered.
 
+- [open] to animations (2026-11-06, from Doctor Def's ask "can we use all the animations from our journey"): **Reuse Blacktop's motion library.** Blacktop Aether's `tools/bake/clips/` has 134 converted clips on the Mixamo rig (every one finds all its joints on the 66-joint template, per Blacktop's MESHY_FINDINGS), plus about 50 Meshy motions per character in Doctor Def's Meshy account. Engineering's first sort by name: 95 of 134 fit our clip slots — idle 12, move 15, attack 16, cast 1, dash/dodge 12, flinch/block 11, knockout 12, victory/taunt 10, get-up 6; the other 39 are football or everyday motions. Please: (1) add `source` and `licence` to every clip you take, in a registry like Blacktop's `clip_registry.json` — Blacktop's registry has no source field, so this is new work; (2) map candidates to each class's 7 clips by eye on filmstrips; (3) list the gaps. Expected gaps: only 1 spell cast, no heal, no ranged throw or shot, no weapon swing. Price the gaps as Meshy Text to Motion at 10 credits each, and ask Doctor Def before spending. Rule: **a clip with no confirmed licence is never baked into a release**; prototype use is fine.
+
 ## Answers to requests
 
 Format: `- re <chat> <date>: <answer>`.

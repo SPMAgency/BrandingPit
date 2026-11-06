@@ -23,5 +23,7 @@ Engineering only.
 
 ## Waiting on Doctor Def
 
+- **Licences for reusing Blacktop's motion in a second game** (one batch, from Blacktop's CLOSEOUT.md): (1) RenderHub mocap, order 419210, Extended Use License — does it cover a second game? (2) The Drive library "Seele Export" — which pack it came from, and its licence. (3) Meshy's commercial-use terms for your plan, in writing; they cover the Meshy-made motions.
+
 - **Style line approval** — `docs/STYLE_LINE.md` (Character Dev). Answer in the Character Dev chat.
 - **Commander pieces approval** — `docs/COMMANDER_PIECES.md` (Character Dev). Same chat.
