@@ -45,7 +45,9 @@ Only the Actions/Functions chat writes this file. Newest first.
    one scope, and the board moved to these files, while my first version was ES modules and
    wrote in STATUS.md sections. Merging would have broken the build (`hex.js` name clash,
    `import` lines). Fix: rebuilt as one plain-script file with one global, on a fresh branch
-   from main, touching only my files; old branch deleted. 3. My build script's safety check
+   from main, touching only my files. 5. Deleting the superseded branch
+   `actions-functions/sim-core` was refused (HTTP 403: this session may push but not delete
+   branches). Not retried. It is stale; ignore it, or Engineering may delete it. 3. My build script's safety check
    counted a name three times that is written twice; the check was wrong, not the code.
    4. A test read declarations line by line and mistook functions inside the engine's wrapper
    for globals. Fix: the test now loads each file in a sandbox and counts real globals.
