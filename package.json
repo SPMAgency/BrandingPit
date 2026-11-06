@@ -1,0 +1,9 @@
+{
+  "name": "branding-pit",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "test": "node tools/build.mjs && node tests/smoke.cjs"
+  }
+}

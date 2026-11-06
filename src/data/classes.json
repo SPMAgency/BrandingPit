@@ -1,0 +1,88 @@
+{
+  "_note": "Owner: Role Building. colors = class colour; traits.r = rank thresholds, traits.d = text; counter = +bonus damage from a class to the one it beats.",
+  "colors": {
+    "Warrior": "#e0704f",
+    "Healer": "#5fcf8e",
+    "Mage": "#9d7ff2",
+    "Judge Mark": "#cfae6b",
+    "Ember Keeper": "#ff8a3d",
+    "Gusting Shallow": "#79cfe6",
+    "Quiet Concern": "#cc72c6",
+    "Leaf in the Wind": "#a6cc5c"
+  },
+  "traits": {
+    "Warrior": {
+      "r": [
+        3,
+        5,
+        8
+      ],
+      "d": "Warriors stack +50% damage on each enemy they hit. Cap: 100% / 200% / 350%."
+    },
+    "Healer": {
+      "r": [
+        3,
+        5,
+        7,
+        8
+      ],
+      "d": "Revive one knocked-out ally: unit at 50% / 100% HP, commander at 50% / 100%."
+    },
+    "Mage": {
+      "r": [
+        3,
+        5
+      ],
+      "d": "Relic powers last 3.0 s longer / double. (No relics in this prototype.)"
+    },
+    "Judge Mark": {
+      "r": [
+        2,
+        4,
+        5
+      ],
+      "d": "Judge Marks gain 20% / 25% / 40% armor and 5% / 18% / 35% chance to slow on hit."
+    },
+    "Ember Keeper": {
+      "r": [
+        4,
+        5
+      ],
+      "d": "Every 5th attack attaches a flame sprite: 3% max HP per second. At 5, that attack also hits for 3% max HP."
+    },
+    "Gusting Shallow": {
+      "r": [
+        4,
+        5
+      ],
+      "d": "Every 3rd attack knocks up and stuns for 1.5 s / 3.0 s."
+    },
+    "Quiet Concern": {
+      "r": [
+        1,
+        5
+      ],
+      "d": "Quiet Concerns gain +5% / +30% crit rate and +5% / +100% crit damage."
+    },
+    "Leaf in the Wind": {
+      "r": [
+        4,
+        5
+      ],
+      "d": "20% chance on hit to root the enemy 1.5 s and step behind it. At 5, +30% attack speed."
+    }
+  },
+  "counter": {
+    "beats": {
+      "Warrior": "Mage",
+      "Mage": "Judge Mark",
+      "Judge Mark": "Quiet Concern",
+      "Quiet Concern": "Healer",
+      "Healer": "Ember Keeper",
+      "Ember Keeper": "Leaf in the Wind",
+      "Leaf in the Wind": "Gusting Shallow",
+      "Gusting Shallow": "Warrior"
+    },
+    "bonus": 0.15
+  }
+}

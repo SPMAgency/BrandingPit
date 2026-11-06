@@ -1,0 +1,126 @@
+{
+  "_note": "Owner: Role Building. PLACEHOLDER fighters from the prototype; replaced by the approved launch roster.",
+  "fighters": {
+    "brasshorn": {
+      "name": "Brasshorn",
+      "cls": "Warrior",
+      "tier": 1,
+      "hp": 650,
+      "atk": 50,
+      "as": 0.7,
+      "range": 1,
+      "armor": 35
+    },
+    "mossling": {
+      "name": "Mossling",
+      "cls": "Healer",
+      "tier": 1,
+      "hp": 450,
+      "atk": 35,
+      "as": 0.65,
+      "range": 3
+    },
+    "glintwick": {
+      "name": "Glintwick",
+      "cls": "Mage",
+      "tier": 1,
+      "hp": 420,
+      "atk": 40,
+      "as": 0.65,
+      "range": 3
+    },
+    "pebblejaw": {
+      "name": "Pebblejaw",
+      "cls": "Judge Mark",
+      "tier": 1,
+      "hp": 700,
+      "atk": 42,
+      "as": 0.6,
+      "range": 1,
+      "armor": 45
+    },
+    "sparkfen": {
+      "name": "Sparkfen",
+      "cls": "Ember Keeper",
+      "tier": 1,
+      "hp": 480,
+      "atk": 45,
+      "as": 0.7,
+      "range": 2
+    },
+    "driftwing": {
+      "name": "Driftwing",
+      "cls": "Gusting Shallow",
+      "tier": 2,
+      "hp": 600,
+      "atk": 55,
+      "as": 0.7,
+      "range": 2
+    },
+    "hushfang": {
+      "name": "Hushfang",
+      "cls": "Quiet Concern",
+      "tier": 2,
+      "hp": 600,
+      "atk": 65,
+      "as": 0.8,
+      "range": 1
+    },
+    "thistlestep": {
+      "name": "Thistlestep",
+      "cls": "Leaf in the Wind",
+      "tier": 2,
+      "hp": 620,
+      "atk": 58,
+      "as": 0.75,
+      "range": 1
+    },
+    "ironbloom": {
+      "name": "Ironbloom",
+      "cls": "Warrior",
+      "tier": 2,
+      "hp": 850,
+      "atk": 60,
+      "as": 0.65,
+      "range": 1,
+      "armor": 40
+    },
+    "auricstag": {
+      "name": "Auric Stag",
+      "cls": "Healer",
+      "tier": 3,
+      "hp": 800,
+      "atk": 60,
+      "as": 0.7,
+      "range": 3
+    },
+    "cindermarquis": {
+      "name": "Cinder Marquis",
+      "cls": "Ember Keeper",
+      "tier": 3,
+      "hp": 820,
+      "atk": 70,
+      "as": 0.7,
+      "range": 2
+    },
+    "galesovereign": {
+      "name": "Gale Sovereign",
+      "cls": "Gusting Shallow",
+      "tier": 3,
+      "hp": 880,
+      "atk": 68,
+      "as": 0.75,
+      "range": 1
+    }
+  },
+  "commander": {
+    "name": "Commander",
+    "cls": null,
+    "hp": 1000,
+    "atk": 70,
+    "as": 0.75,
+    "range": 1,
+    "armor": 35,
+    "mr": 35
+  }
+}

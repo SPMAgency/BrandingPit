@@ -1,0 +1,84 @@
+{
+  "_note": "Owner: Engineering. Files are joined in this order into one script; they share one scope. Data files load into DATA first.",
+  "data": [
+    "classes",
+    "abilities",
+    "roster",
+    "items",
+    "balance"
+  ],
+  "order": [
+    {
+      "file": "src/data/load.js",
+      "owner": "Engineering"
+    },
+    {
+      "file": "src/core/constants.js",
+      "owner": "Engineering"
+    },
+    {
+      "file": "src/core/dom.js",
+      "owner": "Engineering"
+    },
+    {
+      "file": "src/core/state.js",
+      "owner": "Engineering"
+    },
+    {
+      "file": "src/render/camera.js",
+      "owner": "Arena"
+    },
+    {
+      "file": "src/sim/hex.js",
+      "owner": "Actions/Functions"
+    },
+    {
+      "file": "src/core/util.js",
+      "owner": "Engineering"
+    },
+    {
+      "file": "src/sim/pen.js",
+      "owner": "Actions/Functions"
+    },
+    {
+      "file": "src/sim/actors.js",
+      "owner": "Actions/Functions"
+    },
+    {
+      "file": "src/render/fx.js",
+      "owner": "Arena"
+    },
+    {
+      "file": "src/sim/combat.js",
+      "owner": "Actions/Functions"
+    },
+    {
+      "file": "src/sim/phases.js",
+      "owner": "Actions/Functions"
+    },
+    {
+      "file": "src/ui/input.js",
+      "owner": "Engineering"
+    },
+    {
+      "file": "src/ui/hud.js",
+      "owner": "Engineering"
+    },
+    {
+      "file": "src/render/board.js",
+      "owner": "Arena"
+    },
+    {
+      "file": "src/render/units.js",
+      "owner": "Animations"
+    },
+    {
+      "file": "src/render/scene.js",
+      "owner": "Engineering"
+    },
+    {
+      "file": "src/main.js",
+      "owner": "Engineering"
+    }
+  ]
+}

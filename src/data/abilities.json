@@ -1,0 +1,43 @@
+{
+  "_note": "Owner: Role Building. One ability per class: mana cost, name, text. Effects run in src/sim/combat.js.",
+  "Warrior": {
+    "mana": 60,
+    "n": "Cleave",
+    "d": "Strikes the target and enemies beside it for 180% attack damage."
+  },
+  "Healer": {
+    "mana": 70,
+    "n": "Mend",
+    "d": "Heals the most hurt ally for 250% attack damage + 80."
+  },
+  "Mage": {
+    "mana": 60,
+    "n": "Arcane Bolt",
+    "d": "Hurls a bolt for 320% attack damage as magic."
+  },
+  "Judge Mark": {
+    "mana": 80,
+    "n": "Bastion",
+    "d": "Gains a shield worth 30% max HP for 4 s."
+  },
+  "Ember Keeper": {
+    "mana": 60,
+    "n": "Ember Burst",
+    "d": "150% attack damage as magic, then burns 3% max HP per second for 3 s."
+  },
+  "Gusting Shallow": {
+    "mana": 70,
+    "n": "Updraft",
+    "d": "Knocks the target up, stunning it for 1.5 s, and deals 120% attack damage."
+  },
+  "Quiet Concern": {
+    "mana": 50,
+    "n": "Shadow Strike",
+    "d": "A guaranteed critical strike for 200% attack damage."
+  },
+  "Leaf in the Wind": {
+    "mana": 60,
+    "n": "Leaf Step",
+    "d": "Steps behind the target, roots it for 1.5 s and strikes for 150%."
+  }
+}

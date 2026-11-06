@@ -1,0 +1,122 @@
+<title>Branding Pit Raid</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Germania+One&family=Spline+Sans:wght@400;600;700&family=Spline+Sans+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one-screen phone game. Header, tilted hex arena canvas (bench row at its near edge), item tray + action bar below. Single torch-lit dark theme by choice. */
+:root{
+  --pit:#15111c; --stone:#221c2c; --stone-hi:#332a40; --line:#43385a;
+  --ink:#f1e9dc; --muted:#a99db6;
+  --sigil:#f2b84b; --ember:#e86a3a; --you:#56c27a; --foe:#e0524a; --mana:#4d8df0;
+  --display:"Germania One", "Palatino Linotype", Georgia, serif;
+  --body:"Spline Sans", system-ui, -apple-system, sans-serif;
+  --mono:"Spline Sans Mono", ui-monospace, Menlo, monospace;
+  color-scheme:dark;
+}
+html,body{height:100%}
+[hidden]{display:none!important}
+body{margin:0;background:var(--pit);color:var(--ink);font-family:var(--body);overflow:hidden;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+.app{height:100%;display:flex;flex-direction:column;box-sizing:border-box;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:8px 10px;gap:6px;max-width:600px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brandmark{font-family:var(--display);font-weight:400;font-size:22px;line-height:1;color:var(--sigil);margin:0}
+.brandmark small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.pips{display:flex;gap:3px;margin-top:5px}
+.pips i{width:16px;height:5px;border-radius:2px;background:var(--stone-hi);display:block}
+.pips i.boss{background:color-mix(in srgb,var(--ember) 55%,var(--stone-hi))}
+.pips i.now{outline:1.5px solid var(--sigil);outline-offset:1px}
+.hud{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.brands{display:flex;gap:5px;align-items:center}
+.brands i{width:11px;height:11px;transform:rotate(45deg);background:var(--sigil);box-shadow:0 0 8px color-mix(in srgb,var(--sigil) 70%,transparent);display:block}
+.brands i.used{background:transparent;box-shadow:none;outline:1.5px solid var(--line)}
+.timer{min-width:3.6ch;text-align:right;font-weight:700;font-size:18px}
+.timer.hot{color:var(--ember)}
+.stage{position:relative;flex:1;min-height:0;border-radius:14px;background:radial-gradient(130% 90% at 50% 60%,#2b2238 0%,var(--pit) 78%);overflow:hidden;touch-action:none}
+canvas{display:block;width:100%;height:100%}
+.traits{position:absolute;left:8px;top:8px;display:flex;flex-direction:column;gap:4px;pointer-events:auto;max-width:44%}
+.trait{display:flex;align-items:center;gap:6px;background:color-mix(in srgb,var(--pit) 78%,transparent);border:1px solid var(--line);border-radius:8px;padding:3px 7px 3px 4px;font-size:11px;line-height:1.1;cursor:pointer;color:var(--ink);text-align:left}
+.trait .hx{width:18px;height:20px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);display:grid;place-items:center;font-weight:700;font-size:10px;color:var(--pit);background:#5c5170;flex:none}
+.trait.t1 .hx{background:#c98a52}.trait.t2 .hx{background:#c9cfd8}.trait.t3 .hx{background:var(--sigil)}.trait.t4 .hx{background:linear-gradient(135deg,#ffd27a,#ff8fd0)}
+.trait.off{opacity:.62}
+.trait .n{font-family:var(--mono);color:var(--muted);font-size:10px}
+.meter{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;align-items:flex-end;gap:3px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);pointer-events:none}
+.meter .bars{display:flex;gap:3px}
+.meter .bars i{width:22px;height:6px;border-radius:2px;background:var(--stone-hi);display:block;overflow:hidden}
+.meter .bars i b{display:block;height:100%;background:var(--sigil);width:0}
+.banner{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);font-family:var(--display);font-size:46px;color:var(--sigil);text-shadow:0 2px 0 #000,0 0 18px color-mix(in srgb,var(--sigil) 60%,transparent);pointer-events:none;white-space:nowrap}
+.pill{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:color-mix(in srgb,var(--pit) 82%,transparent);border:1px solid var(--line);border-radius:999px;padding:5px 12px;white-space:nowrap;pointer-events:none}
+.pill b{color:var(--sigil)}
+.timebar{position:absolute;left:0;right:0;top:0;height:3px;background:var(--stone-hi)}
+.timebar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--ember),var(--sigil));transform-origin:left center}
+.overlay{position:absolute;inset:0;display:grid;place-items:center;background:color-mix(in srgb,var(--pit) 72%,transparent);padding:16px}
+.card{width:100%;max-width:380px;background:var(--stone);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:11px;max-height:100%;overflow:auto;box-sizing:border-box}
+.card h2{font-family:var(--display);font-weight:400;font-size:30px;margin:0;color:var(--sigil)}
+.card h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0;font-weight:500}
+.card p{margin:0;color:var(--muted);font-size:14px;line-height:1.45}
+.card ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.4}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.tag{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 10px;background:var(--stone-hi);font-size:13px}
+.tag .dot{width:9px;height:9px;border-radius:50%}
+.tag.merge{background:color-mix(in srgb,var(--sigil) 22%,var(--stone-hi));color:var(--sigil)}
+.tag.wait{cursor:pointer;border:1px solid var(--ember)}
+.info{font-size:12.5px;color:var(--muted);min-height:2.7em;line-height:1.35}
+.info b{color:var(--ink)}
+.row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.lbl{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+button{font:inherit;color:var(--ink);background:var(--stone-hi);border:1px solid var(--line);border-radius:10px;padding:7px 12px;cursor:pointer}
+button:focus-visible{outline:2px solid var(--sigil);outline-offset:2px}
+button:disabled{opacity:.4;cursor:default}
+.lure{display:inline-flex;align-items:center;gap:6px;border-radius:999px;font-size:12.5px;padding:5px 10px}
+.lure .dot{width:9px;height:9px;border-radius:50%}
+.lure[aria-pressed="true"]{background:var(--ink);color:var(--pit);border-color:var(--ink)}
+.item{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:5px 9px;border-radius:8px}
+.item i{width:12px;height:12px;border-radius:3px;display:block;box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.35)}
+.item[aria-pressed="true"]{outline:2px solid var(--sigil);outline-offset:1px}
+.go{width:100%;font-weight:700;font-size:16px;padding:12px;background:var(--sigil);border-color:var(--sigil);color:var(--pit)}
+.help{position:absolute;right:8px;bottom:8px;width:30px;height:30px;padding:0;border-radius:50%;font-weight:700}
+.detail{position:absolute;left:8px;right:8px;bottom:8px;max-width:370px;margin:0 auto;background:color-mix(in srgb,var(--stone) 95%,transparent);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:12px;line-height:1.38;display:flex;flex-direction:column;gap:7px;pointer-events:none;box-shadow:0 10px 28px rgba(0,0,0,.5);box-sizing:border-box}
+.detail .hd{display:flex;align-items:center;gap:9px}
+.detail .pt{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font-weight:700;font-size:17px;color:#140f1b;flex:none;box-shadow:inset 0 0 0 2px rgba(0,0,0,.25)}
+.detail .nm{font-weight:700;font-size:14px}
+.detail .sub{color:var(--muted);font-size:11px}
+.detail .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px 8px;font-family:var(--mono);font-size:11.5px;font-variant-numeric:tabular-nums}
+.detail .stats span{color:var(--muted);display:block;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase}
+.detail .ab b{color:var(--sigil)}
+.detail .muted{color:var(--muted)}
+.detail .up{color:var(--you)} .detail .dn{color:var(--foe)}
+</style>
+
+<div class="app">
+  <header>
+    <div>
+      <h1 class="brandmark"><small id="phaseLbl">Round 1 · Camp</small>The Branding Pit</h1>
+      <div class="pips" id="pips"></div>
+    </div>
+    <div class="hud" aria-live="polite">
+      <div class="brands" id="brands" title="Brands left"><i></i><i></i><i></i></div>
+      <div class="timer" id="timer">15.0</div>
+    </div>
+  </header>
+
+  <div class="stage" id="stage">
+    <canvas id="pit" aria-label="Tilted hex arena, 8 by 12, with bench row"></canvas>
+    <div class="timebar" id="timebar" hidden><i id="timefill"></i></div>
+    <div class="traits" id="traits"></div>
+    <div class="meter" id="meter"><span>Relic meter</span><div class="bars"><i><b></b></i><i><b></b></i><i><b></b></i></div><span id="meterNote">no relics yet</span></div>
+    <div class="banner" id="banner" hidden></div>
+    <div class="pill" id="pill" hidden></div>
+    <button class="help" id="helpBtn" aria-label="How the Raid works">?</button>
+    <div class="detail" id="detail" hidden role="status"></div>
+    <div class="overlay" id="overlay" hidden><div class="card" id="card"></div></div>
+  </div>
+
+  <div class="info" id="info"></div>
+  <div class="row" id="lureRow"></div>
+  <div class="row" id="itemRow"></div>
+  <button class="go" id="goBtn">Start Raid</button>
+</div>
+
+<script>
+(function(){
+/*@@SCRIPT@@*/
+})();
+</script>

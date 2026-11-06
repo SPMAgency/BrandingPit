@@ -1,0 +1,80 @@
+{
+  "_note": "Owner: Role Building. Two components combine into an item; stats are additive.",
+  "components": [
+    "Iron Shard",
+    "Ember Thread",
+    "Moon Bead",
+    "Gale Feather"
+  ],
+  "recipes": {
+    "Iron Shard+Iron Shard": "Bulwark Plate",
+    "Ember Thread+Iron Shard": "Forge Gauntlet",
+    "Iron Shard+Moon Bead": "Warden Charm",
+    "Gale Feather+Iron Shard": "Swiftguard Boots",
+    "Ember Thread+Ember Thread": "Cinder Crown",
+    "Ember Thread+Moon Bead": "Spellflare Tome",
+    "Ember Thread+Gale Feather": "Blaze Arrow",
+    "Moon Bead+Moon Bead": "Dream Lantern",
+    "Gale Feather+Moon Bead": "Whisper Veil",
+    "Gale Feather+Gale Feather": "Storm Fan"
+  },
+  "stats": {
+    "Bulwark Plate": {
+      "armor": 40,
+      "hp": 150,
+      "c": "#9aa7b8",
+      "d": "+40 armor, +150 HP"
+    },
+    "Forge Gauntlet": {
+      "atk": 0.25,
+      "armor": 15,
+      "c": "#e0704f",
+      "d": "+25% attack damage, +15 armor"
+    },
+    "Warden Charm": {
+      "mr": 40,
+      "hp": 150,
+      "c": "#b9a7ff",
+      "d": "+40 magic resist, +150 HP"
+    },
+    "Swiftguard Boots": {
+      "as": 0.25,
+      "armor": 15,
+      "c": "#79cfe6",
+      "d": "+25% attack speed, +15 armor"
+    },
+    "Cinder Crown": {
+      "atk": 0.4,
+      "c": "#ff8a3d",
+      "d": "+40% attack damage"
+    },
+    "Spellflare Tome": {
+      "ap": 0.4,
+      "mana": 15,
+      "c": "#9d7ff2",
+      "d": "+40% ability power, start with 15 mana"
+    },
+    "Blaze Arrow": {
+      "atk": 0.15,
+      "as": 0.2,
+      "c": "#ffb35c",
+      "d": "+15% attack damage, +20% attack speed"
+    },
+    "Dream Lantern": {
+      "mana": 30,
+      "c": "#8fb8ff",
+      "d": "Start combat with 30 mana"
+    },
+    "Whisper Veil": {
+      "mr": 25,
+      "as": 0.15,
+      "c": "#cc72c6",
+      "d": "+25 magic resist, +15% attack speed"
+    },
+    "Storm Fan": {
+      "as": 0.45,
+      "c": "#a6e3f0",
+      "d": "+45% attack speed"
+    }
+  }
+}

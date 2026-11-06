@@ -1,0 +1,23 @@
+{
+  "_note": "Owner: Role Building. Every tunable rule number. The per-patch balance job (Online & Accounts) edits this through Role Building.",
+  "star": {
+    "atk": [
+      1,
+      1.8,
+      3.24
+    ],
+    "hp": [
+      1,
+      1.8,
+      3.24
+    ]
+  },
+  "raid": {
+    "seconds": 15,
+    "scout": 2
+  },
+  "slots": {
+    "bench": 8,
+    "board": 8
+  }
+}
