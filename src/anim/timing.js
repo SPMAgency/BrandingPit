@@ -1,33 +1,35 @@
-// Move timing runtime. Owner: Animations. Contract: tools/bake/MOVE_TIMING.md.
-//
-// Pure functions over src/data/move_timing.json. No DOM, no canvas, no clock:
-// the fight sim (and a headless ghost or balance run) can use it unchanged.
-//
-//   import { createTiming } from '../anim/timing.js';
-//   const T = createTiming(json);                 // json = parsed move_timing.json
-//   const mv = T.start('Warrior', 'attack', { as: 0.7 });
-//   // every sim step:
-//   if (T.tick(mv, dt) === 'contact') { resolveHit(); mv.hit = 1; }
-//   if (mv.done) mv = null;
-//
-// Units are frames at 60 per second; tick() takes seconds and advances dt*60,
-// so a variable frame rate is fine.
-//
-// Attack-speed rule (auto-battler): an entry with "scale": "attack" stretches
-// or shrinks as a whole to fill one attack interval (60 / as frames, times
-// "fill"). Every phase scales by the same factor, so contact stays at the same
-// fraction of the swing at any attack speed. "scale": "fixed" entries (casts,
-// brand) play at their authored length.
-
+/* src/anim/timing.js — owner: Animations. Move timing runtime. Contract: tools/bake/MOVE_TIMING.md.
+ *
+ * A plain script, not a module, so Engineering's one-file build can include it
+ * as-is. It defines one global, MoveTiming, and touches nothing else.
+ * Pure functions over src/data/move_timing.json: no DOM, no canvas, no clock,
+ * so a headless ghost or balance run can use it unchanged.
+ *
+ *   const T = MoveTiming.createTiming(DATA.move_timing);
+ *   const mv = T.start('Warrior', 'attack', { as: 0.7 });
+ *   // every sim step:
+ *   if (T.tick(mv, dt) === 'contact') { resolveHit(); mv.hit = 1; }
+ *   if (mv.done) mv = null;
+ *
+ * Units are frames at 60 per second; tick() takes seconds and advances dt*60.
+ *
+ * Attack-speed rule (auto-battler): an entry with "scale": "attack" stretches
+ * or shrinks as a whole to fill one attack interval (60 / as frames, times
+ * "fill"). Every phase scales by the same factor, so contact stays at the same
+ * fraction of the swing at any attack speed. "scale": "fixed" entries (casts,
+ * brand) play at their authored length.
+ */
+var MoveTiming = (function () {
+'use strict';
 const PHASES = ['startup', 'active', 'recovery'];
 
-export function slug(name) {
+function slug(name) {
   if (name == null) return 'commander';
   const s = String(name).trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
   return s === 'cmd' ? 'commander' : s;
 }
 
-export function createTiming(data) {
+function createTiming(data) {
   if (!data || !data.moves) throw new Error('move timing: data has no "moves"');
   const fps = data.fps || 60;
   const hitstopFrames = ((data.impact && data.impact.hitstopMs) || 0) * fps / 1000;
@@ -132,8 +134,5 @@ export function createTiming(data) {
   return { start, tick, phase, hitstop, segments, length, contactAt, loop, entry, data };
 }
 
-export async function loadTiming(url) {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`move timing: ${url} returned ${r.status}`);
-  return createTiming(await r.json());
-}
+return { createTiming, slug };
+})();

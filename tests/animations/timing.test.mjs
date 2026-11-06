@@ -6,10 +6,12 @@ import { readFileSync, mkdtempSync, cpSync, writeFileSync, mkdirSync } from 'nod
 import { join, dirname } from 'node:path';
 import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
+import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
-import { createTiming, slug } from '../../src/anim/timing.js';
+import { loadMoveTiming } from '../../tools/bake/load_timing.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../..');
+const { createTiming, slug } = loadMoveTiming(ROOT);
 const DATA = JSON.parse(readFileSync(join(ROOT, 'src/data/move_timing.json'), 'utf8'));
 const T = createTiming(DATA);
 const near = (a, b, eps = 1e-9) => assert.ok(Math.abs(a - b) < eps, `${a} != ${b}`);
@@ -90,9 +92,10 @@ test('the gate passes the shipped data and fails broken data', () => {
   assert.ok(run(ROOT).ok);
   const breakWith = (mutate) => {
     const dir = mkdtempSync(join(tmpdir(), 'tc-'));
-    for (const p of ['src/anim', 'src/data', 'tools', 'assets/atlases']) mkdirSync(join(dir, p), { recursive: true });
+    for (const p of ['src/anim', 'src/data', 'tools/bake', 'assets/atlases']) mkdirSync(join(dir, p), { recursive: true });
     cpSync(join(ROOT, 'src/anim/timing.js'), join(dir, 'src/anim/timing.js'));
     cpSync(join(ROOT, 'tools/timing_check.mjs'), join(dir, 'tools/timing_check.mjs'));
+    cpSync(join(ROOT, 'tools/bake/load_timing.mjs'), join(dir, 'tools/bake/load_timing.mjs'));
     cpSync(join(ROOT, 'assets/atlases/layout.json'), join(dir, 'assets/atlases/layout.json'));
     const d = structuredClone(DATA); mutate(d);
     writeFileSync(join(dir, 'src/data/move_timing.json'), JSON.stringify(d));
@@ -108,4 +111,16 @@ test('the gate passes the shipped data and fails broken data', () => {
   assert.ok(!r.ok && /wind-up lasts/.test(r.out));
   r = breakWith((d) => { d.moves.quiet_concern.attack.ac = 1; });
   assert.ok(!r.ok && /contact holds/.test(r.out));
+});
+
+test('the runtime is a plain script the one-file build can include', () => {
+  const src = readFileSync(join(ROOT, 'src/anim/timing.js'), 'utf8');
+  assert.ok(!/^\s*(export|import)\b/m.test(src), 'no module syntax');
+  // run it as the browser would and count what it adds to the global scope:
+  // one name, so it cannot collide with another chat's globals
+  const ctx = vm.createContext({});
+  const before = new Set(Object.getOwnPropertyNames(ctx));
+  vm.runInContext(src, ctx);
+  const added = vm.runInContext('Object.getOwnPropertyNames(globalThis)', ctx).filter((k) => !before.has(k) && !(k in globalThis));
+  assert.deepEqual([...added], ['MoveTiming']);
 });
