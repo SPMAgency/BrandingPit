@@ -13,6 +13,8 @@ creates them.
 | `tests/` | Engineering | Add tests for their own files in `tests/<chat>/` |
 | `docs/STYLE_LINE.md` *(planned)*, `assets/source/` manifests *(planned)* | Character Dev | Read |
 | `assets/commander/` *(planned: cosmetic pieces)* | Character Dev | Read |
+| `docs/COMMANDER_PIECES.md`, `docs/class_silhouettes.svg`, `tools/character/` | Character Dev | Read |
+| `src/anim/` (timing runtime), `tests/animations/`, `tools/timing_check.mjs`, `tools/bake/MOVE_TIMING.md` | Animations | Read |
 | `src/data/move_timing.json` *(planned)*, `tools/bake/` *(planned)*, `tools/timing_check.*` *(planned)* | Animations | Read |
 | `assets/atlases/` *(planned)*, `src/render/units.js` (fighter drawing; becomes the sprite player) | Animations | Read |
 | `src/render/commander_bake.js` *(planned: phone-bake spike)* | Animations | Read |

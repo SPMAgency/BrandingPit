@@ -23,4 +23,5 @@ Engineering only.
 
 ## Waiting on Doctor Def
 
-- Nothing yet.
+- **Style line approval** — `docs/STYLE_LINE.md` (Character Dev). Answer in the Character Dev chat.
+- **Commander pieces approval** — `docs/COMMANDER_PIECES.md` (Character Dev). Same chat.
