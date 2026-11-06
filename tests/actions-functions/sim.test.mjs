@@ -355,21 +355,58 @@ test('performance: 200 full ghost fights run in a few seconds headless', () => {
   console.log(`  200 ghost fights in ${Math.round(ms)} ms (${(ms / 200).toFixed(1)} ms each)`);
 });
 
-test('data: real src/data values win; the leftovers come from the prototype rules and are listed', () => {
+test('data: Role Building\'s full layer is read; only the listed gaps come from prototype rules', () => {
   assert.equal(data.raid.seconds, DATA.balance.raid.seconds);
   assert.equal(data.raid.scoutSeconds, DATA.balance.raid.scout);
-  assert.deepEqual(data.combat.starStats, DATA.balance.star);
+  assert.equal(data.raid.brands, DATA.balance.raid.brands_per_raid);
+  assert.deepEqual(data.raid.penOdds[6], DATA.balance.pen_tier_odds.by_round['7']);
+  assert.equal(data.run.startHp, DATA.balance.run.start_hp);
+  assert.deepEqual(data.combat.starStats.hp, DATA.balance.star.hp);
   assert.deepEqual(data.classes.Warrior.ranks, DATA.classes.traits.Warrior.r);
-  assert.equal(data.abilities.Mage.mana, DATA.abilities.Mage.mana);
+  assert.deepEqual(data.classes.Warrior.stackCap, DATA.classes.primary.warrior.ranks.map((r) => r.stack_cap));
+  assert.equal(data.abilities.Mage.mult, DATA.abilities.by_class.mage.effect.atk_mult);
+  assert.equal(data.abilities.Warrior.kind, 'cleave');
+  assert.equal(data.abilities['Leaf in the Wind'].blink, true);
+  assert.equal(data.classes['Recovery Pool'].capMaxHpPerFight, DATA.classes.secondary.recovery_pool.effect.cap_max_hp_per_fight);
+  assert.equal(data.combat.armorK, 100, 'armor constant read from the formula text');
   assert.equal(data.roster.brasshorn.hp, DATA.roster.fighters.brasshorn.hp);
-  assert.ok(data._fromRules.includes('run.startHp'), 'start HP is still a prototype rule');
-  assert.ok(!data._fromRules.some((p) => p.startsWith('roster')), 'roster never comes from rules');
+  assert.ok(!data._fromRules.some((p) => p.startsWith('roster') || p.startsWith('abilities')), 'roster and abilities never come from rules');
+  assert.ok(data._fromRules.includes('combat.retargetSec'));
   const moved = JSON.parse(JSON.stringify(DATA));
-  moved.balance.run = { startHp: 400 };
-  const d2 = fromGameData(moved, RULES);
-  assert.equal(d2.run.startHp, 400, 'once Role Building writes a value, it wins');
-  assert.ok(!d2._fromRules.includes('run.startHp'));
-  console.log(`  ${data._fromRules.length} rule values still come from src/sim/prototype_rules.js`);
+  delete moved.balance.combat.attack_roll;
+  assert.ok(fromGameData(moved, RULES)._fromRules.includes('combat.attackRoll'), 'a value Role Building drops falls back and is listed');
+  console.log(`  ${data._fromRules.length} values still come from src/sim/prototype_rules.js: ${data._fromRules.join(', ')}`);
+});
+
+test('every number the sim needs is present with exactly the data set the build loads', () => {
+  const man = JSON.parse(readFileSync(join(ROOT, 'src/manifest.json'), 'utf8'));
+  const buildData = {};
+  for (const n of new Set([...man.data, 'move_timing'])) buildData[n] = DATA[n];
+  const d = fromGameData(buildData, RULES);
+  assert.deepEqual(PitSim.checkData(d), []);
+  const broken = JSON.parse(JSON.stringify(d)); delete broken.raid.penOdds;
+  assert.deepEqual(PitSim.checkData(broken), ['raid.penOdds'], 'a gap is reported by name');
+});
+
+test('patch layer: class mods, fighter mods and the Pit Condition change the fight stats', () => {
+  const base = PitSim.computeStats(data, { key: 'brasshorn', star: 1 }, { traits: false }, {});
+  const D2 = JSON.parse(JSON.stringify(DATA));
+  D2.balance.patch.class_mods.warrior.hp = 0.95;
+  D2.balance.patch.fighter_mods.brasshorn = { atk: 1.1 };
+  D2.balance.pit_conditions.active = 'iron_week'; // warriors +8% HP
+  const d2 = fromGameData(D2, RULES);
+  const st = PitSim.computeStats(d2, { key: 'brasshorn', star: 1 }, { traits: false }, {});
+  assert.ok(Math.abs(st.max - base.max * 0.95 * 1.08) < 1e-6, 'hp: class mod x Pit Condition');
+  assert.ok(Math.abs(st.atk - base.atk * 1.1) < 1e-6, 'atk: fighter mod');
+  const gale = JSON.parse(JSON.stringify(DATA)); gale.balance.pit_conditions.active = 'gale_season';
+  const g = PitSim.computeStats(fromGameData(gale, RULES), { key: 'driftwing', star: 1 }, { traits: false }, {});
+  assert.equal(g.ccAdd, -0.5, 'Gale Season: Gusting Shallow stuns 0.5 s shorter');
+});
+
+test('copies per run come from balance.copies_per_run and limit the pen', () => {
+  const c = PitSim.initialCopies(data);
+  assert.equal(c.brasshorn, DATA.balance.copies_per_run.by_tier['1']);
+  assert.equal(c.auricstag, DATA.balance.copies_per_run.by_tier['3']);
 });
 
 test('the engine adds exactly one global and loads after the timing runtime', () => {

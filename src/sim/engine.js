@@ -68,40 +68,202 @@ function has(o, path) {
   return true;
 }
 
-// Builds the object the sim reads from the game's DATA. Anything Role Building
-// has written wins; `rules` (PIT_PROTOTYPE_RULES) fills the rest. `_fromRules`
-// lists every value that still came from `rules`: that list is the request to
-// Role Building, and it shrinks to nothing as their files fill in.
+// Builds the object the sim reads from the game's DATA (Role Building's full
+// layer: classes.primary/secondary, abilities.by_class/mana_rules, balance.*,
+// items.rules, bosses.rules). Anything found there wins; `rules`
+// (PIT_PROTOTYPE_RULES) fills what is still missing. `_fromRules` lists every
+// value that still came from `rules`: that list is the request to Role
+// Building, and it shrinks as their files fill in.
+const nameSlug = (s) => String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+const col = (ranks, k, dflt = 0) => ranks.map((r) => (r[k] == null ? dflt : r[k]));
+const set = (o, k, v) => { if (v !== undefined && v !== null) o[k] = v; };
+
+function classFromRB(name, def) {
+  const e = def.effect || {}, R = def.ranks || [];
+  const o = { ranks: R.map((r) => r.at) };
+  switch (e.type) {
+    case 'enemy_damage_stack': set(o, 'stackPerHit', e.stack_per_hit); o.stackCap = col(R, 'stack_cap'); break;
+    case 'revive':
+      set(o, 'revivesPerFight', e.revives_per_fight);
+      o.unitRevivePct = col(R, 'unit_revive_hp'); o.commanderRevivePct = col(R, 'commander_revive_hp');
+      break;
+    case 'relic_boost':
+      o.relicDurationAddSec = col(R, 'relic_duration_add_s'); o.relicPowerMult = col(R, 'relic_power_mult', 1);
+      o.relicDurationMult = col(R, 'relic_duration_mult', 1);
+      break;
+    case 'armor_and_slow':
+      o.armorPct = col(R, 'armor_bonus'); o.slowChance = col(R, 'slow_chance');
+      set(o, 'slowSec', e.slow_seconds); set(o, 'slowFactor', e.slow_attack_speed_mult);
+      break;
+    case 'flame_sprite':
+      o.everyNth = col(R, 'sprite_every_nth_attack', 5); o.bonusHitPct = col(R, 'bonus_hit_max_hp');
+      set(o, 'spritePctPerSec', e.burn_max_hp_per_s); set(o, 'spriteTickSec', e.tick_s);
+      set(o, 'spriteSec', e.sprite_seconds); set(o, 'maxSprites', e.max_sprites_per_enemy);
+      break;
+    case 'knockup_every_nth': set(o, 'everyNth', e.every_nth_attack); o.stunSec = col(R, 'stun_s'); break;
+    case 'crit_bonus': o.critRate = col(R, 'crit_rate_add'); o.critDamage = col(R, 'crit_damage_add'); break;
+    case 'root_and_blink': o.rootChance = col(R, 'root_chance'); o.attackSpeedPct = col(R, 'attack_speed_bonus'); set(o, 'rootSec', e.root_s); break;
+    case 'armor_decay':
+      set(o, 'decayEveryNth', e.every_nth_hit); set(o, 'armorDecayByStar', e.decay_by_star);
+      o.armorPenByRank = col(R, 'armor_pen_by_star', [0, 0, 0]);
+      break;
+    case 'life_steal':
+      o.lifeStealPct = col(R, 'life_steal'); o.everyNth = col(R, 'every_nth', 1);
+      set(o, 'capMaxHpPerFight', e.cap_max_hp_per_fight);
+      break;
+    case 'stun_on_hit': o.stunChance = col(R, 'stun_chance'); set(o, 'stunSec', e.stun_s); break;
+    default: break;
+  }
+  return o;
+}
+
+function abilityFromRB(def) {
+  const e = def.effect || {};
+  const o = { name: def.name, mana: def.mana };
+  const dt = { physical: 'phys', magic: 'magic', true: 'true' };
+  if (e.type === 'heal') { o.kind = 'heal'; set(o, 'mult', e.atk_mult); set(o, 'flat', e.flat); o.anyRange = true; }
+  else if (e.type === 'shield') { o.kind = 'shield'; set(o, 'pct', e.max_hp_mult); set(o, 'sec', e.seconds); }
+  else if (e.type === 'damage') {
+    o.kind = e.area === 'target_and_adjacent' ? 'cleave' : 'strike';
+    if (o.kind === 'cleave') o.radius = 1;
+    set(o, 'mult', e.atk_mult); o.dmgType = dt[e.damage_type] || 'phys';
+    if (e.projectile) o.projectile = true;
+    if (e.can_crit || e.force_crit) o.canCrit = true;
+    if (e.force_crit) o.forceCrit = true;
+    if (e.before && e.before.type === 'blink_behind') { o.blink = true; o.anyRange = true; }
+    const then = e.then ? [].concat(e.then) : [];
+    for (const t of then) {
+      if (t.type === 'burn') { set(o, 'burnSec', t.seconds); set(o, 'burnPctPerSec', t.max_hp_per_s); }
+      if (t.type === 'stun') { set(o, 'stunSec', t.seconds); if (t.knockup) o.knockup = true; }
+      if (t.type === 'root') set(o, 'rootSec', t.seconds);
+    }
+  }
+  return o;
+}
+
 function fromGameData(D, rules) {
-  const B = D.balance || {}, Cl = D.classes || {};
-  const m = {};
-  if (B.board) m.board = B.board;
-  m.combat = Object.assign({}, B.combat || {});
-  if (B.star) m.combat.starStats = B.star;
-  if (B.impact) m.impact = B.impact;
-  m.raid = Object.assign({}, B.raid || {});
-  if (m.raid.scout != null && m.raid.scoutSeconds == null) m.raid.scoutSeconds = m.raid.scout;
-  delete m.raid.scout;
-  m.run = Object.assign({}, B.run || {});
-  if (B.slots) {
-    if (B.slots.bench != null) m.run.benchSize = B.slots.bench;
-    if (B.slots.board != null) m.run.boardSize = B.slots.board;
+  const B = D.balance || {}, Cl = D.classes || {}, Ab = D.abilities || {}, It = D.items || {};
+  const Bo = (D.bosses && D.bosses.rules) || {};
+  const m = { board: {}, combat: {}, raid: {}, run: {}, classes: {}, abilities: {} };
+
+  // board and run
+  const ar = B.run && B.run.arena;
+  if (ar) { set(m.board, 'cols', ar.cols); set(m.board, 'rows', ar.rows); }
+  if (B.run) {
+    set(m.run, 'startHp', B.run.start_hp); set(m.run, 'lossPerUnit', B.run.loss_damage_per_enemy_unit);
+    set(m.run, 'lossCommander', B.run.loss_damage_enemy_commander); set(m.run, 'winTarget', B.run.win_target);
   }
-  if (Cl.counter) m.counter = Cl.counter;
-  m.classes = {};
-  for (const c in Cl.traits || {}) m.classes[c] = Object.assign({ ranks: Cl.traits[c].r }, (Cl.effects || {})[c] || {});
-  for (const c in Cl.secondary || {}) m.classes[c] = Object.assign({}, Cl.secondary[c]);
-  m.abilities = {};
-  for (const c in D.abilities || {}) {
-    if (c[0] === '_') continue;
-    const a = D.abilities[c];
-    m.abilities[c] = Object.assign({ name: a.n, mana: a.mana }, a.effect || {});
+  if (B.slots) { set(m.run, 'benchSize', B.slots.bench); set(m.run, 'boardSize', B.slots.board); }
+  if (Bo.on_loss) set(m.run, 'bossLossHpFraction', Bo.on_loss.lose_fraction_of_current_hp);
+
+  // combat
+  const cb = B.combat || {};
+  set(m.combat, 'baseCrit', cb.base_crit); set(m.combat, 'critDamage', cb.base_crit_damage);
+  set(m.combat, 'defaultArmor', cb.default_armor); set(m.combat, 'defaultMr', cb.default_mr);
+  set(m.combat, 'attackRoll', cb.attack_roll); set(m.combat, 'minDamage', cb.min_damage);
+  const k = /x\s*(\d+(?:\.\d+)?)\s*\/\s*\(\s*\1\s*\+\s*armor\s*\)/.exec(cb.armor_formula || '');
+  if (k) m.combat.armorK = Number(k[1]);
+  if (B.star) m.combat.starStats = { hp: B.star.hp, atk: B.star.atk };
+  const mr = Ab.mana_rules || {};
+  set(m.combat, 'manaPerAttack', mr.per_attack); set(m.combat, 'manaOnHitPct', mr.per_hit_taken_fraction_of_damage);
+  set(m.combat, 'manaOnHitCap', mr.per_hit_taken_cap);
+  if (Cl.default_stun_seconds) set(m.combat, 'stunSec', Cl.default_stun_seconds.value);
+  if (It.rules) set(m.combat, 'itemSlots', It.rules.max_items_per_fighter);
+
+  // raid
+  const R = B.raid || {};
+  set(m.raid, 'seconds', R.seconds); set(m.raid, 'scoutSeconds', R.scout);
+  set(m.raid, 'brands', R.brands_per_raid); set(m.raid, 'spoilsBrand', R.extra_brand_from_sacrifice);
+  set(m.raid, 'lureShare', R.lure_max_share_of_pen);
+  if (R.pen_size_by_round) set(m.raid, 'penSizeByRound', R.pen_size_by_round.table);
+  if (R.wild_stat_scale) {
+    const w = R.wild_stat_scale;
+    m.raid.penScale = { hpBase: w.hp.base, hpPerRound: w.hp.per_round, atkBase: w.atk.base, atkPerRound: w.atk.per_round };
   }
+  if (R.runners) {
+    const r = R.runners;
+    if (r.min_tier != null) m.raid.runnerTiers = [1, 2, 3, 4, 5].filter((t) => t >= r.min_tier);
+    set(m.raid, 'runnerHp', r.hp_mult); set(m.raid, 'runnerFleeSec', r.flee_after_s);
+    if (R.pen_min_top_tier_units && r.min_tier != null) m.raid.guaranteedRunnerTier = R.pen_min_top_tier_units.value > 0 ? r.min_tier : 0;
+  }
+  if (B.pen_tier_odds && B.pen_tier_odds.by_round) {
+    const br = B.pen_tier_odds.by_round;
+    m.raid.penOdds = Object.keys(br).map(Number).sort((a, b) => a - b).map((n) => br[n]);
+  }
+  if (It.rules) set(m.raid, 'lootChance', It.rules.drop_chance_per_pen_fighter);
+  if (B.copies_per_run) m.copiesByTier = B.copies_per_run.by_tier;
+
+  // classes, counter, abilities
+  if (Cl.counter) m.counter = { beats: Cl.counter.beats, bonus: Cl.counter.bonus };
+  for (const id in Cl.primary || {}) { const c = Cl.primary[id]; m.classes[c.name] = classFromRB(c.name, c); }
+  for (const id in Cl.secondary || {}) { if (id[0] === '_') continue; const c = Cl.secondary[id]; m.classes[c.name] = classFromRB(c.name, c); }
+  if (!Cl.primary) for (const c in Cl.traits || {}) m.classes[c] = { ranks: Cl.traits[c].r };
+  if (Ab.by_class) {
+    for (const id in Ab.by_class) {
+      const name = (Cl.primary && Cl.primary[id] && Cl.primary[id].name) || Object.keys(Cl.traits || {}).find((n) => nameSlug(n) === id);
+      if (name) m.abilities[name] = abilityFromRB(Ab.by_class[id]);
+    }
+  } else {
+    for (const c in Ab) if (c[0] !== '_' && Ab[c] && Ab[c].mana != null) m.abilities[c] = { name: Ab[c].n, mana: Ab[c].mana };
+  }
+
+  // the patch layer: class mods, then fighter mods, then the active Pit Condition
+  if (B.patch) {
+    const pc = B.pit_conditions && B.pit_conditions.active ? (B.pit_conditions.list || {})[B.pit_conditions.active] : null;
+    m.patch = { version: B.patch.version, classMods: B.patch.class_mods || {}, fighterMods: B.patch.fighter_mods || {}, bossMods: B.patch.boss_mods || {},
+      pit: pc ? { id: B.pit_conditions.active, classMods: pc.class_mods || {} } : null };
+  }
+
   if (D.roster) { m.roster = D.roster.fighters; m.commander = D.roster.commander; }
-  if (D.items) m.items = { components: D.items.components, recipes: D.items.recipes, stats: D.items.stats };
+  if (It.components) m.items = { components: It.components, recipes: It.recipes, stats: It.stats };
+
   const out = deepMerge(rules || {}, m);
   if (m.roster) out.roster = m.roster; // the roster is replaced whole, never mixed
   out._fromRules = leaves(rules || {}, '', []).filter((p) => !has(m, p));
+  return out;
+}
+
+
+// Every value the fight reads. checkData(data) returns the paths that are missing,
+// so a gap shows up at start-up and in tests, not as NaN mid-fight.
+const REQUIRED = [
+  'board.cols', 'board.rows', 'board.exitRow',
+  'combat.baseCrit', 'combat.critDamage', 'combat.armorK', 'combat.defaultArmor', 'combat.defaultMr',
+  'combat.manaPerAttack', 'combat.manaOnHitPct', 'combat.manaOnHitCap', 'combat.attackRoll', 'combat.minDamage',
+  'combat.retargetSec', 'combat.firstAttackSec', 'combat.pathJitter', 'combat.moveSpeed', 'combat.projectileSpeed',
+  'combat.stunSec', 'combat.knockupSec', 'combat.starStats', 'combat.itemSlots', 'combat.timeLimitSec',
+  'impact.hitStopMs',
+  'raid.seconds', 'raid.scoutSeconds', 'raid.brands', 'raid.penRows', 'raid.runnerRow', 'raid.penSizeByRound',
+  'raid.penOdds', 'raid.runnerTiers', 'raid.runnerFleeSec', 'raid.runnerSpeed', 'raid.runnerHp', 'raid.lootChance',
+  'raid.lureShare', 'raid.penScale',
+  'run.startHp', 'run.lossPerUnit', 'run.lossCommander', 'run.bossLossHpFraction', 'run.winTarget', 'run.timeoutCountsAs',
+  'counter.beats', 'counter.bonus', 'roster', 'commander', 'items.components', 'items.recipes', 'items.stats',
+  'classes.Warrior.stackPerHit', 'classes.Warrior.stackCap', 'classes.Healer.revivesPerFight', 'classes.Healer.unitRevivePct',
+  'classes.Healer.commanderRevivePct', 'classes.Healer.autoReviveDelaySec', 'classes.Judge Mark.armorPct',
+  'classes.Judge Mark.slowChance', 'classes.Judge Mark.slowSec', 'classes.Judge Mark.slowFactor',
+  'classes.Ember Keeper.everyNth', 'classes.Ember Keeper.spritePctPerSec', 'classes.Ember Keeper.spriteSec',
+  'classes.Ember Keeper.maxSprites', 'classes.Ember Keeper.bonusHitPct', 'classes.Gusting Shallow.everyNth',
+  'classes.Gusting Shallow.stunSec', 'classes.Quiet Concern.critRate', 'classes.Quiet Concern.critDamage',
+  'classes.Leaf in the Wind.rootChance', 'classes.Leaf in the Wind.rootSec', 'classes.Leaf in the Wind.attackSpeedPct',
+];
+function checkData(data) {
+  const missing = REQUIRED.filter((p) => {
+    let x = data;
+    for (const k of p.split('.')) { if (x == null || !(k in Object(x))) return true; x = x[k]; }
+    return x == null || (typeof x === 'number' && !isFinite(x));
+  });
+  for (const c in data.abilities || {}) {
+    const a = data.abilities[c];
+    if (!a || a.mana == null || !a.kind) missing.push(`abilities.${c}.kind`);
+  }
+  return missing;
+}
+
+// Copies of each fighter in one run's pens (design layer 3): { key: n }.
+function initialCopies(data) {
+  const by = data.copiesByTier || {};
+  const out = {};
+  for (const k in data.roster) { const n = by[data.roster[k].tier]; if (n != null) out[k] = n; }
   return out;
 }
 
@@ -247,6 +409,9 @@ function traitRanks(data, units) {
 }
 
 const at = (arr, k, dflt = 0) => (arr && k >= 0 && k < arr.length ? arr[k] : dflt);
+const atv = (v, k, dflt = 0) => (Array.isArray(v) ? at(v, k, dflt) : v ?? dflt); // a number, or one value per rank
+
+const slugName = (s) => String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
 
 function computeStats(data, unit, side, ranks) {
   const d = defOf(data, unit);
@@ -303,7 +468,24 @@ function computeStats(data, unit, side, ranks) {
       // Secondary attributes have a base effect on the carrier, plus rank bonuses.
       const p = C[sec];
       if (p.armorPenByStar) st.armorPen += at(p.armorPenByStar, star - 1);
-      if (p.armorPenRankBonusByStar && ranks[sec] >= 0) st.armorPen += at(p.armorPenRankBonusByStar, star - 1);
+      if (p.armorPenByRank && ranks[sec] >= 0) st.armorPen += at(at(p.armorPenByRank, ranks[sec], []), star - 1);
+    }
+  }
+
+  // The patch layer (Role Building's balance.json): class mods, then fighter
+  // mods, then the active Pit Condition. Saved ghosts fight on today's numbers.
+  st.healPower = 1; st.ccAdd = 0;
+  const P = data.patch;
+  if (P) {
+    const cs = cls ? slugName(cls) : null;
+    for (const mod of [cs && P.classMods[cs], P.fighterMods[unit.key], cs && P.pit && P.pit.classMods[cs]]) {
+      if (!mod) continue;
+      if (mod.hp != null) st.max *= mod.hp;
+      if (mod.atk != null) st.atk *= mod.atk;
+      if (mod.as != null) st.as *= mod.as;
+      if (mod.ability_power != null) st.ap *= mod.ability_power;
+      if (mod.heal_power != null) st.healPower *= mod.heal_power;
+      if (mod.cc_seconds_add != null) st.ccAdd += mod.cc_seconds_add;
     }
   }
   return st;
@@ -357,7 +539,7 @@ function createFight(config) {
     F.phase = 'scout';
     F.scoutLeft = ticks(data.raid.scoutSeconds);
     F.raidTicks = ticks(data.raid.seconds);
-    F.brandsLeft = data.raid.brands + (config.brands || 0);
+    F.brandsLeft = data.raid.brands + (config.brands || 0) * (data.raid.spoilsBrand ?? 1);
   } else {
     F.raidTicks = ticks(cb.timeLimitSec);
   }
@@ -658,7 +840,7 @@ function deal(F, src, tgt, amt, type, o = {}) {
     const armor = Math.max(0, tgt.armor * tgt.armorMult * (1 - (src ? src.armorPen : 0)));
     amt *= cb.armorK / (cb.armorK + armor);
   } else if (type === 'magic') amt *= cb.armorK / (cb.armorK + tgt.mr);
-  amt = Math.max(1, Math.round(amt));
+  amt = Math.max(cb.minDamage ?? 1, Math.round(amt));
 
   let rest = amt;
   if (tgt.shield > 0) { const ab = Math.min(tgt.shield, rest); tgt.shield -= ab; rest -= ab; }
@@ -677,12 +859,14 @@ function deal(F, src, tgt, amt, type, o = {}) {
   return amt;
 }
 
-function heal(F, src, tgt, amt) {
-  if (!live(tgt)) return;
+function heal(F, src, tgt, amt, raw) {
+  if (!live(tgt)) return 0;
+  if (src && !raw) amt *= src.healPower;
   const h = Math.round(Math.min(amt, tgt.max - tgt.hp));
-  if (h <= 0) return;
+  if (h <= 0) return 0;
   tgt.hp += h;
   contact(F, 'heal', src, tgt, { amount: h });
+  return h;
 }
 
 function knockOut(F, t, src) {
@@ -711,7 +895,8 @@ function addSprite(F, src, tgt, pctPerSec, sec) {
   const EK = F.data.classes['Ember Keeper'];
   const cap = EK ? EK.maxSprites : 1;
   if (tgt.sprites.length >= cap) tgt.sprites.shift();
-  tgt.sprites.push({ src: src ? src.id : null, left: ticks(sec), age: 0, dmg: tgt.max * pctPerSec });
+  const every = Math.max(1, ticks(EK && EK.spriteTickSec != null ? EK.spriteTickSec : 1));
+  tgt.sprites.push({ src: src ? src.id : null, left: ticks(sec), age: 0, every, dmg: tgt.max * pctPerSec * (every / TICK_HZ) });
   status(F, src, tgt, 'burn', ticks(sec), { sprites: tgt.sprites.length });
 }
 
@@ -719,7 +904,7 @@ function tickSprites(F, a) {
   for (let i = 0; i < a.sprites.length && live(a); i++) {
     const s = a.sprites[i];
     s.age++;
-    if (s.age % TICK_HZ === 0) deal(F, s.src != null ? F.actors[s.src] : null, a, s.dmg, 'magic', { source: 'burn' });
+    if (s.age % s.every === 0) deal(F, s.src != null ? F.actors[s.src] : null, a, s.dmg, 'magic', { source: 'burn' });
     if (--s.left <= 0) a.sprites.splice(i--, 1);
   }
 }
@@ -733,8 +918,8 @@ function onAttackHit(F, a, t) {
     mult += t.wstack;
     t.wstack = Math.min(at(W.stackCap, ranks.Warrior), t.wstack + W.stackPerHit);
   }
-  const j = F.data.combat.jitter;
-  deal(F, a, t, a.atk * mult * F.rng.range(1 - j, 1 + j), 'phys', { canCrit: true });
+  const roll = F.data.combat.attackRoll;
+  deal(F, a, t, a.atk * mult * F.rng.range(roll[0], roll[1]), 'phys', { canCrit: true });
   if (!live(t)) return;
 
   const k = a.cls ? ranks[a.cls] : -1;
@@ -742,13 +927,13 @@ function onAttackHit(F, a, t) {
     t.slow = ticks(C['Judge Mark'].slowSec); t.slowFactor = C['Judge Mark'].slowFactor;
     status(F, a, t, 'slow', t.slow);
   }
-  if (a.cls === 'Ember Keeper' && k >= 0 && a.hits % C['Ember Keeper'].everyNth === 0) {
+  if (a.cls === 'Ember Keeper' && k >= 0 && a.hits % atv(C['Ember Keeper'].everyNth, k, 1) === 0) {
     const E = C['Ember Keeper'];
     addSprite(F, a, t, E.spritePctPerSec, E.spriteSec);
     const bonus = at(E.bonusHitPct, k);
     if (bonus > 0) deal(F, a, t, t.max * bonus, 'magic', { source: 'trait' });
   }
-  if (a.cls === 'Gusting Shallow' && k >= 0 && a.hits % C['Gusting Shallow'].everyNth === 0) {
+  if (a.cls === 'Gusting Shallow' && k >= 0 && a.hits % atv(C['Gusting Shallow'].everyNth, k, 1) === 0) {
     stun(F, a, t, at(C['Gusting Shallow'].stunSec, k), true);
   }
   if (a.cls === 'Leaf in the Wind' && k >= 0 && F.rng.chance(at(C['Leaf in the Wind'].rootChance, k))) {
@@ -762,7 +947,10 @@ function onAttackHit(F, a, t) {
     status(F, a, t, 'armor_down', 0, { armorMult: t.armorMult });
   }
   if (a.sec === 'Recovery Pool' && sk >= 0 && a.hits % at(C['Recovery Pool'].everyNth, sk, 1) === 0) {
-    heal(F, a, a, a.atk * at(C['Recovery Pool'].lifeStealPct, sk));
+    const RP = C['Recovery Pool'];
+    const cap = RP.capMaxHpPerFight != null ? RP.capMaxHpPerFight * a.max : Infinity;
+    const want = Math.min(a.atk * at(RP.lifeStealPct, sk), cap - (a.stolen || 0));
+    if (want > 0) a.stolen = (a.stolen || 0) + heal(F, a, a, want, true);
   }
   if (a.sec === 'Magnetic Composition' && sk >= 0 && F.rng.chance(at(C['Magnetic Composition'].stunChance, sk))) {
     stun(F, a, t, C['Magnetic Composition'].stunSec ?? F.data.combat.stunSec, false);
@@ -770,14 +958,14 @@ function onAttackHit(F, a, t) {
 }
 
 function stun(F, src, t, sec, knockup) {
-  const n = ticks(sec);
+  const n = ticks(Math.max(0, sec + (src ? src.ccAdd : 0)));
   t.stun = Math.max(t.stun, n); t.action = null;
   if (knockup) t.knock = ticks(F.data.combat.knockupSec);
   status(F, src, t, knockup ? 'knockup' : 'stun', n);
 }
 
 function root(F, src, t, sec) {
-  t.root = Math.max(t.root, ticks(sec));
+  t.root = Math.max(t.root, ticks(Math.max(0, sec + (src ? src.ccAdd : 0))));
   status(F, src, t, 'root', t.root);
 }
 
@@ -1127,6 +1315,6 @@ return {
   mergeAll, combineComponents,
   newRun, lossDamage, outcomeOf, applyGhostResult, applyBossResult,
   traitRanks, computeStats, createRng, hexDist, neighbors, cellWorld, rotate180,
-  fromGameData, simTiming,
+  fromGameData, simTiming, initialCopies, checkData, REQUIRED,
 };
 })();
