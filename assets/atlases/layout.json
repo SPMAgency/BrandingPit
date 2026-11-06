@@ -1,36 +1,100 @@
 {
   "_doc": "Atlas layout. Owner: Animations. One source for the Godot bake (tools/bake), the phone bake (src/render/commander_bake.js), the sprite player (src/render/units.js) and tools/timing_check.mjs. Columns are frames in clip order; rows are the baked directions.",
   "version": 1,
-  "cell": {"w": 96, "h": 120, "footY": 114, "bodyPx": 92},
-  "_cell_doc": "footY: the ground line inside the cell. bodyPx: target height of an upright guard pose, leaving headroom for raised arms.",
-
+  "cell": {
+    "w": 96,
+    "h": 120,
+    "footY": 104,
+    "bodyPx": 80,
+    "refHeightM": 1.8
+  },
+  "_cell_doc": "Fixed world scale for every fighter. footY: the ground point's line in the cell. bodyPx: on-screen height of a height-band 1.00 fighter (a Warrior), ground to top of head; the bake scales each model to band x refHeightM, so a Mage at 1.15 stands 92 px and Character Dev's bands survive into the sprite. Measured on the proof bake (2026-11-06, 180 px diagnostic cell): at the 44 deg camera the feet reach 13 px below the ground point standing still, because toes nearer the camera project lower; in a wide stance the foot nearer the camera sits lower on screen. footY 104 leaves 16 px for it and 12 px above a Mage's hat (106 was 1 px short after rounding).",
   "directions": [
-    {"row": 0, "name": "front34", "yawDeg": -45},
-    {"row": 1, "name": "side",    "yawDeg": -90},
-    {"row": 2, "name": "back34",  "yawDeg": -135}
+    {
+      "row": 0,
+      "name": "front34",
+      "yawDeg": 45
+    },
+    {
+      "row": 1,
+      "name": "side",
+      "yawDeg": 90
+    },
+    {
+      "row": 2,
+      "name": "back34",
+      "yawDeg": 135
+    }
   ],
-  "_directions_doc": "Six headings from three rows: the player mirrors each row horizontally for the opposite side. yawDeg turns the model away from facing the camera (0 = facing the camera, -90 = facing screen right).",
-
-  "camera": {"pitchDeg": -44, "fovDeg": 20, "projection": "perspective"},
-  "_camera_doc": "pitchDeg measured from prototype/raid.html: camera height 1.12 x near distance, so 48 deg to the near row and 40 deg to the far row; 44 is the middle. Arena owns the board camera and is asked to confirm.",
-
+  "_directions_doc": "Six headings from three rows. yawDeg turns the model from facing the camera toward screen right (45 front three-quarter, 90 side, 135 back three-quarter). The player mirrors a row horizontally for the matching left heading.",
+  "camera": {
+    "pitchDeg": -44,
+    "fovDeg": 20,
+    "projection": "perspective"
+  },
+  "_camera_doc": "pitchDeg: camera looks down 44 deg, measured from prototype/raid.html (camera height 1.12 x near distance: 48 deg to the near row, 40 to the far row). Arena owns the board camera and is asked to confirm.",
   "sheets": {
-    "fighter":   {"passes": ["col"], "clips": ["idle", "move", "attack", "cast", "flinch", "knockout", "victory"]},
-    "commander": {"passes": ["col", "mask"], "clips": ["idle", "move", "attack", "cast", "flinch", "knockout", "victory", "brand", "magic"]}
+    "fighter": {
+      "passes": [
+        "col"
+      ],
+      "clips": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "flinch",
+        "knockout",
+        "victory"
+      ]
+    },
+    "commander": {
+      "passes": [
+        "col",
+        "mask"
+      ],
+      "clips": [
+        "idle",
+        "move",
+        "attack",
+        "cast",
+        "flinch",
+        "knockout",
+        "victory",
+        "brand",
+        "magic"
+      ]
+    }
   },
-
   "clips": {
-    "idle":     {"frames": 6},
-    "move":     {"frames": 6},
-    "attack":   {"frames": 6},
-    "cast":     {"frames": 6},
-    "flinch":   {"frames": 2},
-    "knockout": {"frames": 2},
-    "victory":  {"frames": 4},
-    "brand":    {"frames": 3},
-    "magic":    {"frames": 3}
+    "idle": {
+      "frames": 6
+    },
+    "move": {
+      "frames": 6
+    },
+    "attack": {
+      "frames": 6
+    },
+    "cast": {
+      "frames": 6
+    },
+    "flinch": {
+      "frames": 2
+    },
+    "knockout": {
+      "frames": 2
+    },
+    "victory": {
+      "frames": 4
+    },
+    "brand": {
+      "frames": 3
+    },
+    "magic": {
+      "frames": 3
+    }
   },
-
   "budget": {
     "_doc": "Decoded memory, RGBA 4 bytes per pixel. Checked by tools/timing_check.mjs.",
     "fighterFrames": 32,

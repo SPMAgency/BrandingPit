@@ -1,0 +1,63 @@
+{
+  "_doc": "TEST FIXTURE, never shipped. Proves the bake on Blacktop Aether's studio-owned test rig (read-only sister repo) before any Branding Pit fighter exists. Output goes to a scratch folder because ship is false.",
+  "id": "fixture_blacktop",
+  "fixture": true,
+  "ship": false,
+  "sheet": "fighter",
+  "class": "Warrior",
+  "band": 1.0,
+  "model": "${BLACKTOP}/tools/bake/assets/character.glb",
+  "clip_files": [
+    "${BLACKTOP}/tools/bake/clips/idle_03.glb",
+    "${BLACKTOP}/tools/bake/clips/left_uppercut_from_guard.glb",
+    "${BLACKTOP}/tools/bake/clips/angry_ground_stomp.glb",
+    "${BLACKTOP}/tools/bake/clips/hit_reaction.glb",
+    "${BLACKTOP}/tools/bake/clips/knock_down.glb",
+    "${BLACKTOP}/tools/bake/clips/boxing_warmup.glb"
+  ],
+  "clips": {
+    "idle": {
+      "anim": "idle_03",
+      "loop": true
+    },
+    "move": {
+      "anim": "Walking",
+      "loop": true
+    },
+    "attack": {
+      "anim": "left_uppercut_from_guard",
+      "at": [
+        0.05,
+        0.16,
+        0.27,
+        0.42,
+        0.65,
+        0.95
+      ],
+      "_picked": "by eye on a 12-sample side-view sweep, 2026-11-06: full extension at 0.27"
+    },
+    "cast": {
+      "anim": "angry_ground_stomp"
+    },
+    "flinch": {
+      "anim": "hit_reaction"
+    },
+    "knockout": {
+      "anim": "knock_down",
+      "at": [
+        0.0,
+        0.22
+      ]
+    },
+    "victory": {
+      "anim": "boxing_warmup",
+      "loop": true
+    }
+  },
+  "props": [],
+  "flat_colour": [
+    0.86,
+    0.55,
+    0.32
+  ]
+}

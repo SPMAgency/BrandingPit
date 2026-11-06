@@ -1,0 +1,24 @@
+; The Branding Pit sprite bake — headless Godot 4.3 project. Owner: Animations.
+; Ported from Blacktop Aether tools/bake/godot. A build tool: nothing here ships.
+;
+; gl_compatibility, not mobile or forward_plus: both of those are Vulkan, and a
+; headless runner under xvfb has no Vulkan surface (Blacktop, measured).
+; No main_scene on purpose: everything runs via --script.
+
+config_version=5
+
+[application]
+
+config/name="Branding Pit Bake"
+config/features=PackedStringArray("4.3")
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+textures/canvas_textures/default_texture_filter=0
+anti_aliasing/quality/msaa_3d=0
+
+[display]
+
+window/size/viewport_width=96
+window/size/viewport_height=120
