@@ -2,7 +2,13 @@
 
 Carried into this chat's next session. Update it at the end of every session.
 
-## Where things stand (2026-11-06)
+## Where things stand (2026-11-06 08:35)
+
+- **RESUME HERE:** Brasshorn textured model exists in Meshy (My generations, Model
+  tab, first tile, 499,184 faces). Do: remesh to ~8,000 → auto-rig (check chin and
+  groin markers) → export glb, Mixamo template, All Added, single file. All free.
+  44 of 51 approved credits spent. Paused because the Chrome extension disconnected.
+- Style line is LOCKED (colours open, random roll per model). Commander plan approved.
 
 - `docs/STYLE_LINE.md` — DRAFT, awaiting Doctor Def. Base line, 8 class lines, colour,
   creature, face and tier rules, 10 per-model checks, Meshy recipe, Brasshorn prompt.
@@ -17,9 +23,7 @@ Carried into this chat's next session. Update it at the end of every session.
 
 ## Next step
 
-1. When Doctor Def approves the line: change STYLE_LINE.md header to LOCKED with the
-   date, add his edits, log it in the decision table.
-2. Ask in chat for the **51 credits** for Brasshorn, then run it in Meshy through
+2. (Done up to the 3D model.) Run Brasshorn in Meshy through
    Claude in Chrome (Blacktop's `docs/prompts/MESHY_CHROME.md` rules: new tab, never
    enter credentials or payment, ask before any download and name its size, stop after
    two identical failures and diagnose on the board).
@@ -35,7 +39,5 @@ Carried into this chat's next session. Update it at the end of every session.
 
 ## Open questions for Doctor Def
 
-- Approve the style line (or edits).
-- Commander: class-neutral look (attribute shown by code effect); two pigment slots
-  (main + trim) across the outfit; 6 face presets + skin tint, one body type at launch.
-- OK 51 credits for the Brasshorn test fighter.
+- Re-open Chrome with the Claude extension so the remesh/rig/export can finish.
+- Before downloading the export: confirm the file name and size.

@@ -179,6 +179,21 @@ boss in memory at a time.
 Blacktop found the concept model ignores "exaggerated head and hands" on the first
 pass; the refine round fixes it reliably, so it is budgeted rather than retried.
 
+**Meshy's prompt box holds 800 characters.** The full base + class + details text is
+longer, so Meshy gets a compact form that keeps every rule (Brasshorn's, 796 characters,
+is in `assets/source/brasshorn.json` and is the template). Compact base line:
+
+> 3D game character, full body, front view, plain light background. Original chunky
+> cartoon humanoid fighter for an all-ages fantasy battler: big head, big hands and
+> feet, bold simple face, big clear eyes, thick silhouette. Flat colour panels, no fine
+> pattern. Fully clothed, no blood. Strict A-pose: arms straight out 45 degrees, hands
+> open and empty, palms down, legs apart. No numbers, no logos, no text, nothing in hand.
+
+Then a compact class line (its build and signal only) and the fighter's details.
+Settings: 1 image, A-Pose; Image to 3D at Meshy 7.1, Standard resolution, texture on at
+2K, A-Pose, Private. Measured cost on Brasshorn: 9 + 25 + 10 = **44 credits** with no
+refine needed.
+
 Refine prompt (swap the bracketed parts):
 
 > Make the proportions more arcade: noticeably bigger head, about one fifth of the

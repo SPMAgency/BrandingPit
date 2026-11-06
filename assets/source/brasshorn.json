@@ -1,0 +1,47 @@
+{
+  "id": "brasshorn",
+  "kind": "fighter",
+  "roster_id": "brasshorn",
+  "class": "Warrior",
+  "tier": 1,
+  "style_line_version": "LOCKED 2026-11-06 (colours open)",
+  "colour_roll": { "seed": 1793971294, "main": "pale gold", "accent": "lilac" },
+  "prompts": {
+    "text_to_image": "3D game character, full body, front view, plain light background. Original chunky cartoon humanoid fighter for an all-ages fantasy battler: big head, big hands and feet, bold simple face, big clear eyes, thick silhouette. Flat colour panels, no fine pattern. Fully clothed, no blood. Strict A-pose: arms straight out 45 degrees, hands open and empty, palms down, legs apart. No numbers, no logos, no text, nothing in hand. Warrior: broad heavy build, very wide shoulders, oversized round shoulder guards, thick arms, wrapped forearms, planted stance. Brasshorn: stocky ram-like fighter, pale gold short fur, two curled lilac horns tight to the head, smaller than the shoulder guards, cheerful grin, sleeveless pale gold vest, pale gold trousers and boots, lilac shoulder guards and forearm wraps.",
+    "refine": "skipped: first concept already met proportions and A-pose"
+  },
+  "meshy": {
+    "plan": "paid (Pro)",
+    "licence": "Private",
+    "image_model": "Nano Banana Pro, 1 image, A-Pose",
+    "model_version": "Meshy 7.1 Flagship, Standard resolution, texture 2K, A-Pose",
+    "task_ids": [],
+    "credits": 44,
+    "credit_lines": ["Text to Image -9 (08:24)", "Model stage -25 (08:30)", "Texture stage -10 (08:31)"],
+    "balance_before": 749,
+    "balance_after": 755,
+    "balance_note": "a credit grant landed on the account during the run; spend is from the ledger, not the balance"
+  },
+  "mesh": {
+    "triangles": 499184,
+    "triangles_after_remesh": null,
+    "joints": null,
+    "skeleton_template": "Mixamo",
+    "export": "glb, All Added, single file"
+  },
+  "drive_path": "",
+  "checks": {
+    "class_from_silhouette": false,
+    "height_band": false,
+    "signal_shape": true,
+    "flat_surface": true,
+    "colour_rules": true,
+    "e10_plus": true,
+    "rig_safe": true,
+    "triangle_budget": false,
+    "export_and_joint_names": false,
+    "licence_recorded": true
+  },
+  "made_on": "2026-11-06",
+  "notes": "Remaining (all free): remesh to ~8,000 triangles, auto-rig, export through Mixamo template. Silhouette and height checks run on the bake."
+}

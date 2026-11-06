@@ -4,16 +4,33 @@ Only the Character Dev chat writes this file. Newest first.
 
 ## Status
 
-- 2026-11-06 — **Style line drafted, awaiting Doctor Def:** `docs/STYLE_LINE.md`
-  (base line, 8 class lines, colour, creature and tier rules, 10 per-model checks,
-  Meshy recipe, test fighter prompt). Shape guide `docs/class_silhouettes.svg`
-  (regenerate with `tools/character/silhouettes.py`).
-- 2026-11-06 — **Commander proposal, awaiting Doctor Def:** `docs/COMMANDER_PIECES.md`
-  (class-neutral base body, 7 seams, replace-not-layer slots, 5-id part map for
-  pigment/skin/hair tints, cutting tool plan, pass/fail test, ~102 credits to test).
-- 2026-11-06 — Manifest template for every model: `assets/source/_template.json`.
-- **Next, after approval:** Brasshorn test fighter in Meshy, **51 credits, needs
-  Doctor Def's OK in chat.** Nothing spent so far.
+- 2026-11-06 08:35 — **Brasshorn test fighter, 3D model done, paused.** Concept image
+  (9 cr) and textured Meshy 7.1 model (25 + 10 cr) made under the Private licence:
+  **44 of 51 approved credits spent**, ledger checked. Model is 499,184 faces. Left to
+  do, all free: remesh to ~8,000, auto-rig, export glb through the Mixamo template.
+  Manifest: `assets/source/brasshorn.json`.
+- 2026-11-06 08:22 — **Style line LOCKED** by Doctor Def, colours open: every model
+  rolls a random main + accent colour until colour is deemed important. Commander
+  plan approved.
+
+### Failures, diagnosed
+
+- **Chrome extension disconnected** (08:35, twice in a row: "Browser extension is not
+  connected"). Cause: the extension on Doctor Def's computer lost its link (Chrome
+  closed, computer asleep, or the extension service restarting). Fix: Doctor Def
+  re-opens Chrome with the Claude extension; I resume at the remesh step. Needs Doctor
+  Def: yes, physically (no money, no decision). Nothing was lost: the model sits in
+  Meshy's My generations.
+- **Meshy prompt box capped at 800 characters**; the full base + class + details prompt
+  is ~1,350, so the first entry was rejected. Fix: a compact Meshy form of the line
+  that keeps every rule (796 chars, recorded in the manifest). No authorization needed.
+- **Image count defaulted to 4 (36 cr)**; set to 1 (9 cr) before generating. No spend.
+- **Image to 3D did not start twice**: while Meshy's settings popup is open, the next
+  click only closes it, and the settings reset after a page reload. Confirmed nothing
+  started (balance and list unchanged) before each retry. Fix: set settings, close the
+  popup, then press the viewer's Image to 3D button. Worked first time.
+- Skipped the 12-credit refine step: the first concept already had arcade proportions
+  and a strict A-pose.
 
 ### Decisions made here, and why (mine to make)
 
