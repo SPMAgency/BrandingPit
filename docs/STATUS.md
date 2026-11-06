@@ -16,9 +16,10 @@ Engineering only.
 
 - 2026-11-06 — Repo set up. Eight chats opened. Animation reboot plan approved
   (https://claude.ai/artifact/JjBtCDAx9H4qNmpmJDSk6D).
-- **In progress (Engineering):** splitting `prototype/raid.html` into `src/` modules
-  along `docs/OWNERS.md` lines, with a single-file build. Until it lands, work in your
-  own new files and leave the prototype alone.
+- **2026-11-06 — Module split landed.** The game now builds from `src/`: 18 files, each
+  with one owner (see `docs/OWNERS.md`, "How the build works"). Balance data is JSON in
+  `src/data/`. `npm test` must pass before every push to main. Behaviour is unchanged
+  from the prototype (smoke test passes on both; diff shows only the data move).
 
 ## Waiting on Doctor Def
 
