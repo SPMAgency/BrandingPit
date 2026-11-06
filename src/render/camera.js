@@ -10,22 +10,22 @@
 
 /* LOCKED. Every baked atlas depends on these. A change means a re-bake and needs Doctor Def's OK. */
 const ARENA_CAM={
-  elevDeg:46,        // looks down 46 deg at the board centre (43.3 at the far edge, 48.3 at the near edge)
+  elevDeg:44,        // looks down 44 deg at the board centre (41.3 at the far edge, 46.3 at the near edge); = layout.json camera.pitchDeg
   farNearRatio:.8,   // the far edge draws at 0.8x the scale of the bench row
-  bodyWorld:2.4,     // standing fighter, head to foot, in hex radii (about 1.4 hex widths)
+  bodyWorld:2.4,     // a height-band 1.00 fighter, ground to top of head, in hex radii (about 1.4 hex widths)
   maxDpr:2           // canvas resolution cap (board performance)
 };
-/* Sprite cell contract shared with Animations (tools/bake, src/render/units.js). */
+/* Sprite cell, mirrored from Animations' assets/atlases/layout.json (their file, the one source for the bake and the
+   sprite player). tests/arena/checks.mjs fails if this copy drifts from it. */
 const SPRITE_CELL={
   cellW:96, cellH:120,
-  foot:4,            // feet on y = 116 in the cell
-  body:84,           // a standing figure is 84 px head to foot; the rest is headroom for raised arms and props
-  bakePitchDeg:46,   // = ARENA_CAM.elevDeg
-  bakeFovDeg:20,     // long lens, as Blacktop's bake.gd
-  // Three baked rows, mirrored for the other three hex headings. Yaw from "facing the camera",
-  // positive = turned toward screen-right. These are exactly the six hex neighbour directions.
-  rows:[{row:0,yawDeg:30,name:'front three-quarter'},{row:1,yawDeg:90,name:'side'},{row:2,yawDeg:150,name:'back three-quarter'}]
+  footY:104,         // the ground point's line in the cell
+  bodyPx:80,         // a height-band 1.00 fighter stands 80 px; other bands scale with it (a Mage at 1.15 stands 92)
+  bakePitchDeg:44,   // = ARENA_CAM.elevDeg
+  bakeFovDeg:20
 };
+/* Hex neighbour headings on this board, measured from facing the camera: 30, 90 and 150 degrees, mirrored. */
+const HEX_HEADINGS_DEG=[30,90,150];
 
 /* ---------- projection ---------- */
 let W=0,H=0,DPR=1,F=1,CX=0,YH=0,XC=0,ZMAX=0,DN=0,CAMH=0;
@@ -35,8 +35,8 @@ function benchW(i){const w=SQ3*(COLS+.5),x0=-SQ3/2;return [x0+w*(i+.5)/BENCH,BEN
 function P(x,z){const D=DN+(ZMAX-z);return {x:CX+(x-XC)*F/D,y:YH+CAMH*F/D,s:F/D};}
 /* Screen squash of a ground circle at depth z (ry / rx), for rings and sigils that lie flat. */
 function groundRatio(z){const a=P(XC,z-.5),b=P(XC,z+.5);return (b.y-a.y)/((a.s+b.s)/2);}
-/* CSS px per sprite px at depth z: a baked 84 px body becomes bodyWorld hex radii on the board. */
-function spriteScale(z){return ARENA_CAM.bodyWorld*P(XC,z).s/SPRITE_CELL.body;}
+/* CSS px per sprite px at depth z: a baked 80 px (band 1.00) body becomes bodyWorld hex radii on the board. */
+function spriteScale(z){return ARENA_CAM.bodyWorld*P(XC,z).s/SPRITE_CELL.bodyPx;}
 /* World heading (dx,dz) -> baked row and mirror flag. */
 function headingToRow(dx,dz){const a=Math.abs(Math.atan2(dx,dz))*180/Math.PI;return {row:a<60?0:a<120?1:2,flip:dx<0};}
 

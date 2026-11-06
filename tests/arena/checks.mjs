@@ -51,6 +51,14 @@ for (const [name, w, h] of [['360x640 small Android', 328, 410], ['390x844 iPhon
   const got = dirs.map(([dx, dz]) => { const r = A.headingToRow(dx, dz); return r.row + (r.flip ? 'f' : ''); }).join(' ');
   ok(got === '1 0 0f 1f 2f 2', `six hex headings map to rows side, front 3/4, front 3/4 mirrored, side mirrored, back 3/4 mirrored, back 3/4 (${got})`); }
 
+// 1b. The cell and camera here must match Animations' layout.json (their file, the one source for the bake).
+{ const A = load(358, 616), L = JSON.parse(readFileSync(join(root, 'assets/atlases/layout.json'), 'utf8'));
+  const c = A.SPRITE_CELL, same = c.cellW === L.cell.w && c.cellH === L.cell.h && c.footY === L.cell.footY && c.bodyPx === L.cell.bodyPx;
+  ok(same, `sprite cell matches layout.json (${c.cellW}x${c.cellH}, feet ${c.footY}, body ${c.bodyPx})`);
+  ok(Math.abs(L.camera.pitchDeg) === A.ARENA_CAM.elevDeg && c.bakePitchDeg === A.ARENA_CAM.elevDeg, `bake pitch ${L.camera.pitchDeg} matches the board camera ${A.ARENA_CAM.elevDeg} deg`);
+  const yaws = L.directions.map(d => d.yawDeg).join('/');
+  console.log((yaws === '30/90/150' ? 'PASS ' : 'NOTE ') + `baked row yaws ${yaws}; hex headings on this board are 30/90/150 (request open to Animations)`); }
+
 // 2. Readability
 const lin = c => { c /= 255; return c <= .03928 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4; };
 const lum = h => { const n = parseInt(h.slice(1), 16); return .2126 * lin(n >> 16 & 255) + .7152 * lin(n >> 8 & 255) + .0722 * lin(n & 255); };

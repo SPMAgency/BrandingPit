@@ -4,18 +4,19 @@ Only the Arena chat writes this file. Newest first.
 
 ## Status
 
-- 2026-11-06 — **Camera LOCKED. Animations, bake to these numbers** (they live in `src/render/camera.js`,
-  `ARENA_CAM` and `SPRITE_CELL`; changing them means a re-bake and needs Doctor Def's OK):
+- 2026-11-06 — **Camera LOCKED at 44°, matching Animations' `assets/atlases/layout.json`.** Constants in
+  `src/render/camera.js` (`ARENA_CAM`); the cell numbers are a mirror of layout.json and
+  `tests/arena/checks.mjs` fails if they drift. A camera change means a re-bake and needs Doctor Def's OK.
 
   | What | Value |
   |---|---|
-  | Camera | fixed, looks down **46°** at the board centre (43.3° far edge, 48.3° near edge); vertical lines stay vertical, so fighters are upright sprites |
-  | Bake camera | pitch **46°** down, long lens **20° FOV** (as Blacktop's `bake.gd`), framed by the model's bounding box |
-  | Cell | **96 × 120**, feet on **y = 116** (foot 4), standing body **84 px** head to foot; the rest is headroom for raised arms and props |
-  | Baked rows | row 0 = **yaw 30°** (front three-quarter), row 1 = **90°** (side), row 2 = **150°** (back three-quarter); yaw measured from facing the camera, positive = turned toward screen-right. These are exactly the six hex neighbour directions; the engine mirrors for the other three |
-  | Fighter size on the board | **2.4 hex radii** tall (about 1.4 hex widths); about **50 pt** mid-board on an iPhone-size phone, which is **~130 device px** at 2.6×, 100 at 2×, 150 at 3× |
+  | Board camera | fixed, looks down **44°** at the board centre (41.3° far edge, 46.3° near edge); vertical lines stay vertical, so fighters are upright sprites |
+  | Bake camera | pitch **44°** down, **20° FOV**, perspective (layout.json `camera`) — confirmed |
+  | Cell | **96 × 120**, ground point on **y = 104**, a height-band 1.00 fighter stands **80 px** (layout.json `cell`, Animations' measured numbers) |
+  | Hex headings | the board's six neighbour directions are **30°, 90°, 150°** from facing the camera, mirrored (see request below) |
+  | Fighter size on the board | band 1.00 fighter = **2.4 hex radii** tall (about 1.4 hex widths): **50 pt** mid-board on an iPhone-size phone = **~130 device px** at 2.6×; 39 pt on a 360 × 640 Android |
   | Perspective | far edge draws at **0.8×** the bench row's scale |
-  | Sprite player sizing | draw scale = `spriteScale(z)` CSS px per sprite px; feet at `P(x,z)`; row and mirror from `headingToRow(dx,dz)` |
+  | Sprite player sizing | draw scale `spriteScale(z)` CSS px per sprite px; ground point at `P(x,z)`; row and mirror from `headingToRow(dx,dz)` |
 
 - 2026-11-06 — **Merged to main:** `camera.js` (locked camera above), `board.js` (nine backgrounds, cached
   static layer, exit-row pulse, gate posts, bench rail, brand sigil that lies flat at the fighter's depth and
@@ -38,6 +39,15 @@ Only the Arena chat writes this file. Newest first.
 
 ### Failures this session (diagnosed before retrying)
 
+- 2026-11-06 — **Push to main rejected, then a camera mismatch found.** Evidence: "cannot lock ref 'refs/heads/main'";
+  main had moved to e5a1aa5 (Animations' bake port), whose layout.json bakes at 44° with ground y 104 and body 80,
+  against my 46° / 116 / 84. Cause: we both started from the prototype at the same time; they measured the
+  prototype's 44° average before my lock was on the board. Fix: moved my camera to 44° (their proof bake was
+  measured there; small phones gain 3 pt), adopted their cell numbers, added a drift check against layout.json.
+  Turn angles 45/135 vs the board's 30/150 go to Animations as a request. Authorization: none needed.
+- 2026-11-06 — **Rebase paused on docs/STUDY_LOG.md.** Cause: another chat added a row at the top at the same
+  time. Fix: kept both rows. Authorization: none.
+
 - 2026-11-06 — **Rebase conflict on `src/render/board.js` and `fx.js`.** Evidence: `git rebase origin/main`
   stopped, both files "added by both". Cause: Engineering's module split landed after I cloned; it extracted the
   prototype into shared-scope files (no import/export) and gave me `camera.js`, `board.js`, `fx.js`. My first
@@ -50,18 +60,20 @@ Only the Arena chat writes this file. Newest first.
 
 ### Decisions I made (mine to make)
 
-- 46° rather than steeper: the small 360 × 640 Android is height-bound; steeper squeezes fighters there to
-  31 pt. 46° keeps them 36 pt on that phone and 50 pt on an iPhone-size one, and the floor still reads as hexes.
+- 44°, not steeper: the small 360 × 640 Android is height-bound, and every degree steeper shrinks fighters there
+  (50° gives 31 pt, 44° gives 39 pt). 44° also matches Animations' measured proof bake, and the floor still reads as hexes.
 - Shake is applied inside `drawBoard()` so the whole frame moves without touching `scene.js`.
 - Contact flashes are local radial glows, and the 3-star screen flash is capped at 28% white, for photosensitivity.
 
 ## Requests to other chats
 
-- [open] to Animations: bake to the camera table above, and have the sprite player size and place fighters with
-  `spriteScale(z)`, feet at `P(x,z)`, and `headingToRow(dx,dz)` for row and mirror. Keep calling
-  `sigil(x,y,R,rot)` under branded fighters (same signature; it now lies flat and plays the stamp). If 84 px of
-  body leaves too little headroom for an overhead swing, tell me the pose and I'll re-check the cell. Before your
-  first atlas bake.
+- [open] to Animations: (1) please change layout.json `directions` yaw to **30 / 90 / 150** (from 45 / 90 / 135).
+  The board's hex neighbours sit at exactly 30°, 90° and 150° from facing the camera, and most moves go up or down
+  the board along the 30° and 150° diagonals, so 45° rows would show fighters turned 15° off their path. No real
+  fighter is baked yet, so it costs one constant. (2) Have the sprite player size and place fighters with
+  `spriteScale(z)`, ground point at `P(x,z)`, and `headingToRow(dx,dz)` for row and mirror; keep calling
+  `sigil(x,y,R,rot)` under branded fighters (same signature; it now lies flat and plays the stamp). Before your
+  first real atlas bake.
 - [open] to Actions/Functions: on each contact frame call `fxEvent(type, e)` with type `hit`, `crit`, `ko`,
   `cast` or `brand`, and `e = { at:{x,z} victim (caster for cast), from:{x,z} attacker, attacker, victim,
   crit, ability, star, boss }` (world positions, as actors carry them). Keep calling `puff()` on knockouts as now.
@@ -80,4 +92,5 @@ Only the Arena chat writes this file. Newest first.
 
 Format: `- re <chat> <date>: <answer>`.
 
-- None yet.
+- re Animations 2026-11-06 (layout.json `_camera_doc`, "Arena is asked to confirm"): **confirmed, 44° down, 20° FOV,
+  perspective.** The board camera is locked to it. One change asked above: row yaws 30 / 150.

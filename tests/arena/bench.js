@@ -22,7 +22,7 @@ const live=f=>!f.ko&&!f.bench;
 const sizeOf=f=>spriteScale(f.z)*(f.bench?.9:1)*(f.team==='boss'?1.35:1);
 
 function figure(f,now){
-  const p=P(f.x,f.z),k=sizeOf(f),body=SPRITE_CELL.body*k,bw=body*.17;
+  const p=P(f.x,f.z),k=sizeOf(f),body=SPRITE_CELL.bodyPx*k,bw=body*.17;
   let x=p.x,y=p.y;
   // ground: shadow, team ring, runner glow, brand sigil (in the game, units.js draws these and calls sigil())
   const gr=groundRatio(f.z),s=p.s*(f.team==='boss'?1.35:f.bench?.9:1);
@@ -41,7 +41,7 @@ function figure(f,now){
   const {row,flip}=headingToRow(f.hx,f.hz);   // facing dot: which way the fighter looks
   ctx.fillStyle='rgba(10,8,14,.75)';ctx.beginPath();ctx.arc(x+(flip?-1:1)*bw*(row===2?.2:.45),top+bw*.9,Math.max(1.5,bw*.18),0,TAU);ctx.fill();
   if(guides&&!f.bench){
-    const cw=SPRITE_CELL.cellW*k,ch=SPRITE_CELL.cellH*k,footY=y+SPRITE_CELL.foot*k;
+    const cw=SPRITE_CELL.cellW*k,ch=SPRITE_CELL.cellH*k,footY=y+(SPRITE_CELL.cellH-SPRITE_CELL.footY)*k;
     ctx.strokeStyle='rgba(143,227,255,.8)';ctx.setLineDash([3,3]);ctx.lineWidth=1;ctx.strokeRect(x-cw/2,footY-ch,cw,ch);ctx.setLineDash([]);
     ctx.fillStyle='rgba(143,227,255,.9)';ctx.font='600 9px '+MONO;ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.fillText('row '+row+(flip?' ⇋':''),x,footY-ch-3);
   }
@@ -110,7 +110,7 @@ const sl=$('sliders');
 sl.innerHTML=Object.entries(IMPACT_TUNING).map(([k,d])=>'<label for="s-'+k+'"><span>'+d.label+'</span><output id="o-'+k+'">'+d.def+'</output><input id="s-'+k+'" type="range" min="'+d.min+'" max="'+d.max+'" step="'+d.step+'" value="'+d.def+'"></label>').join('');
 sl.addEventListener('input',e=>{const k=e.target.id.slice(2);if(!(k in IMPACT_TUNING))return;impactSettings[k]=+e.target.value;$('o-'+k).textContent=e.target.value;});
 $('resetSliders').addEventListener('click',()=>{for(const [k,d] of Object.entries(IMPACT_TUNING)){impactSettings[k]=d.def;$('s-'+k).value=d.def;$('o-'+k).textContent=d.def;}});
-$('camNums').textContent=ARENA_CAM.elevDeg+'° down · far edge '+ARENA_CAM.farNearRatio+'× · fighter '+ARENA_CAM.bodyWorld+' hex radii tall · cell '+SPRITE_CELL.cellW+'×'+SPRITE_CELL.cellH+', feet at '+(SPRITE_CELL.cellH-SPRITE_CELL.foot)+', body '+SPRITE_CELL.body+' px · baked rows at '+SPRITE_CELL.rows.map(r=>r.yawDeg+'°').join(' / ')+' · hit-stop '+HITSTOP_MS+' ms';
+$('camNums').textContent=ARENA_CAM.elevDeg+'° down · far edge '+ARENA_CAM.farNearRatio+'× · fighter '+ARENA_CAM.bodyWorld+' hex radii tall · cell '+SPRITE_CELL.cellW+'×'+SPRITE_CELL.cellH+', feet at '+SPRITE_CELL.footY+', body '+SPRITE_CELL.bodyPx+' px · hex headings '+HEX_HEADINGS_DEG.map(d=>d+'°').join(' / ')+' · hit-stop '+HITSTOP_MS+' ms';
 
 ARENA_PAD={top:30,bottom:6,side:4};
 setRound(1);resize();report();requestAnimationFrame(frame);
