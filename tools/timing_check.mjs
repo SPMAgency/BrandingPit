@@ -25,13 +25,20 @@ const errs = [];
 const warns = [];
 const fail = (m) => errs.push(m);
 
-// Every class with an ability needs an attack and a cast. The list comes from
-// Role Building's src/data/abilities.json, so a new ability cannot ship
-// without timing. Before that file existed: the design doc's eight.
+// Every primary class has one ability, so every primary class needs an attack
+// and a cast. The list is Role Building's: src/data/classes.json "primary"
+// (names), else the keys of its "colors". Only that list is read, so other
+// keys Role Building adds can never be mistaken for a class (2026-11-06: a
+// new "mana_rules" key in abilities.json broke the first version of this).
 let CLASSES = ['Warrior', 'Healer', 'Mage', 'Judge Mark', 'Ember Keeper', 'Gusting Shallow', 'Quiet Concern', 'Leaf in the Wind'];
-if (existsSync(join(ROOT, 'src/data/abilities.json'))) {
-  const keys = Object.keys(read('src/data/abilities.json')).filter((k) => !k.startsWith('_'));
-  if (keys.length) CLASSES = keys;
+if (existsSync(join(ROOT, 'src/data/classes.json'))) {
+  const c = read('src/data/classes.json');
+  const prim = c.primary && typeof c.primary === 'object'
+    ? Object.entries(c.primary).filter(([k]) => !k.startsWith('_')).map(([k, v]) => (v && v.name) || k)
+    : [];
+  const cols = c.colors && typeof c.colors === 'object' ? Object.keys(c.colors).filter((k) => !k.startsWith('_')) : [];
+  if (prim.length) CLASSES = prim;
+  else if (cols.length) CLASSES = cols;
 }
 const REQUIRED = Object.fromEntries(CLASSES.map((c) => [slug(c), ['attack', 'cast']]));
 REQUIRED.commander = ['attack', 'magic', 'brand'];
