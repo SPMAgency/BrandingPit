@@ -1,12 +1,13 @@
 # Who owns what
 
-One owner per file. To change a file you don't own, post the request in the owner's
-section of `docs/STATUS.md`. Paths marked *(planned)* do not exist yet; the owner
+One owner per file. To change a file you don't own, post a request in your own
+board file, `docs/board/<you>.md`, addressed to the owner. Paths marked *(planned)* do not exist yet; the owner
 creates them.
 
 | Path | Owner | Others may |
 |---|---|---|
-| `CLAUDE.md`, `docs/STATUS.md` header, `docs/OWNERS.md` | Engineering | Write in their own STATUS section only |
+| `CLAUDE.md`, `docs/STATUS.md`, `docs/OWNERS.md` | Engineering | Read |
+| `docs/board/<chat>.md` | That chat | Read |
 | `prototype/raid.html` | Engineering | Read. Frozen reference until the module split lands |
 | `src/main.js`, `src/ui/` *(planned)*, `index.html` *(planned)*, build config | Engineering | Read |
 | `tests/` | Engineering | Add tests for their own files in `tests/<chat>/` |

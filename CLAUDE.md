@@ -5,7 +5,9 @@ Owner and producer: Doctor Def. Eight chats build it; each owns its own files.
 
 ## Read first, every session
 
-1. `docs/STATUS.md` — the board. Read the top, then anything addressed to your chat.
+1. `docs/STATUS.md` — the board's top page, then every file in `docs/board/` for requests
+   addressed to your chat (`grep -rn "\[open\] to <your chat>" docs/board/`).
+   You write only `docs/board/<your-chat>.md`; post requests to others there too.
 2. `docs/handoff/<your-chat>.md` — where you left off.
 3. `docs/OWNERS.md` — who owns which file. Never edit a file you do not own; ask its owner on the board.
 
@@ -25,13 +27,17 @@ blocked on another chat, check every 5. Stop checking when you are idle.
 - **One feature per request.** A change request names the problem, how it should work, and what must stay unchanged.
 - **Simple first.** Build the plain version, test it, then add one layer at a time.
 - **Checkpoint before experiments.** Work on a branch named `<chat>/<feature>`. Merge your own finished work to `main` yourself.
+- **Diagnose every failure before retrying.** Never retry blind. After any failed run, write in your board file: what failed (with the evidence: error, log line, screenshot), the root cause, the fix, and whether it needs Doctor Def's authorization (money, credits, accounts, a decision). Only then try the fix.
 - **Two failed attempts, roll back.** Return to the last good commit and restart the problem from a clean description.
+- **Work autonomously.** Decide anything that is yours to decide and record why in your board file. Ask Doctor Def only for money, credits, accounts, legal or a real design choice, and batch those questions.
 - **Every feel number is a slider or a data value, never hard-coded.**
 - **Measure, don't assume.** The headless browser is not the phone. Frame rate, memory and feel are signed off on Doctor Def's devices only.
 - **Judge motion by eye** on a filmstrip, not by a metric.
 - **Only the Engineering chat builds, releases, and decides what ships.**
 - **Doctor Def is the producer.** Bring him decisions, cleared blockers and things ready to test, not engineering detail.
-- **End every session** by updating your handoff file and your section of the board.
+- **Before every push**, `git pull --rebase`. If a rebase conflicts in a file you don't own,
+  you edited someone else's file: undo that change and post a request instead.
+- **End every session** by updating your handoff file and your board file.
 
 ## Hard rules
 
