@@ -1,0 +1,83 @@
+{
+  "_doc": "Move timing track. Owner: Animations. Readers: Actions/Functions, Sound/Music, Arena. Never edit from another chat; ask on the board. Contract: tools/bake/MOVE_TIMING.md. Check: node tools/timing_check.mjs",
+  "version": 1,
+  "fps": 60,
+
+  "limits": {
+    "_doc": "Readability rules, checked by tools/timing_check.mjs at the slowest and fastest attack speed the game allows. attackSpeed.min/max are Role Building's balance range (asked on the board).",
+    "attackSpeed": {"min": 0.4, "max": 3.0},
+    "attack": {
+      "minActiveFrames": 2,
+      "minFramesPerArt": 1,
+      "maxStartupSec": 1.0
+    },
+    "cast": {
+      "maxTotalFrames": 60,
+      "maxStartupFrames": 24,
+      "minActiveFrames": 2
+    }
+  },
+
+  "impact": {
+    "_doc": "Hit-stop freezes both fighters' moves. Flash and shake numbers are Arena's, not here.",
+    "hitstopMs": 60
+  },
+
+  "loops": {
+    "_doc": "Clips with no contact. The sprite player reads these. fps is baked frames per second; move fps scales with movement speed against refHexPerSec.",
+    "idle":     {"fps": 8,  "loop": true},
+    "move":     {"fps": 10, "loop": true, "speedScale": "move", "refHexPerSec": 2.6},
+    "flinch":   {"fps": 12, "loop": false},
+    "knockout": {"fps": 8,  "loop": false, "holdLast": true},
+    "victory":  {"fps": 6,  "loop": true}
+  },
+
+  "moves": {
+    "warrior": {
+      "class": "Warrior",
+      "attack": {"clip": "attack", "su": 20, "ac": 6, "rc": 26, "art": {"startup": [0, 1], "active": [2], "recovery": [3, 4, 5]}, "scale": "attack", "fill": 1.0, "contact": "unverified", "wired": 0},
+      "cast":   {"clip": "cast", "ability": "Cleave", "su": 16, "ac": 6, "rc": 22, "art": {"startup": [0, 1], "active": [2], "recovery": [3, 4, 5]}, "scale": "fixed", "contact": "unverified", "wired": 0}
+    },
+    "healer": {
+      "class": "Healer",
+      "attack": {"clip": "attack", "su": 16, "ac": 5, "rc": 27, "art": {"startup": [0, 1], "active": [2], "recovery": [3, 4, 5]}, "scale": "attack", "fill": 1.0, "contact": "unverified", "wired": 0},
+      "cast":   {"clip": "cast", "ability": "Mend", "su": 14, "ac": 6, "rc": 22, "art": {"startup": [0, 1], "active": [2], "recovery": [3, 4, 5]}, "scale": "fixed", "contact": "unverified", "wired": 0}
+    },
+    "mage": {
+      "class": "Mage",
+      "attack": {"clip": "attack", "su": 18, "ac": 5, "rc": 25, "art": {"startup": [0, 1], "active": [2], "recovery": [3, 4, 5]}, "scale": "attack", "fill": 1.0, "contact": "unverified", "wired": 0},
+      "cast":   {"clip": "cast", "ability": "Arcane Bolt", "su": 18, "ac": 5, "rc": 21, "art": {"startup": [0, 1], "active": [2], "recovery": [3, 4, 5]}, "scale": "fixed", "contact": "unverified", "wired": 0}
+    },
+    "judge_mark": {
+      "class": "Judge Mark",
+      "attack": {"clip": "attack", "su": 22, "ac": 6, "rc": 28, "art": {"startup": [0, 1], "active": [2], "recovery": [3, 4, 5]}, "scale": "attack", "fill": 1.0, "contact": "unverified", "wired": 0},
+      "cast":   {"clip": "cast", "ability": "Bastion", "su": 12, "ac": 6, "rc": 20, "art": {"startup": [0, 1], "active": [2], "recovery": [3, 4, 5]}, "scale": "fixed", "contact": "unverified", "wired": 0}
+    },
+    "ember_keeper": {
+      "class": "Ember Keeper",
+      "attack": {"clip": "attack", "su": 16, "ac": 5, "rc": 27, "art": {"startup": [0, 1], "active": [2], "recovery": [3, 4, 5]}, "scale": "attack", "fill": 1.0, "contact": "unverified", "wired": 0},
+      "cast":   {"clip": "cast", "ability": "Ember Burst", "su": 16, "ac": 5, "rc": 21, "art": {"startup": [0, 1], "active": [2], "recovery": [3, 4, 5]}, "scale": "fixed", "contact": "unverified", "wired": 0}
+    },
+    "gusting_shallow": {
+      "class": "Gusting Shallow",
+      "attack": {"clip": "attack", "su": 16, "ac": 5, "rc": 27, "art": {"startup": [0, 1], "active": [2], "recovery": [3, 4, 5]}, "scale": "attack", "fill": 1.0, "contact": "unverified", "wired": 0},
+      "cast":   {"clip": "cast", "ability": "Updraft", "su": 16, "ac": 6, "rc": 22, "art": {"startup": [0, 1], "active": [2], "recovery": [3, 4, 5]}, "scale": "fixed", "contact": "unverified", "wired": 0}
+    },
+    "quiet_concern": {
+      "class": "Quiet Concern",
+      "attack": {"clip": "attack", "su": 12, "ac": 5, "rc": 28, "art": {"startup": [0, 1], "active": [2], "recovery": [3, 4, 5]}, "scale": "attack", "fill": 1.0, "contact": "unverified", "wired": 0},
+      "cast":   {"clip": "cast", "ability": "Shadow Strike", "su": 10, "ac": 5, "rc": 23, "art": {"startup": [0, 1], "active": [2], "recovery": [3, 4, 5]}, "scale": "fixed", "contact": "unverified", "wired": 0}
+    },
+    "leaf_in_the_wind": {
+      "class": "Leaf in the Wind",
+      "attack": {"clip": "attack", "su": 14, "ac": 5, "rc": 27, "art": {"startup": [0, 1], "active": [2], "recovery": [3, 4, 5]}, "scale": "attack", "fill": 1.0, "contact": "unverified", "wired": 0},
+      "cast":   {"clip": "cast", "ability": "Leaf Step", "su": 12, "ac": 5, "rc": 23, "art": {"startup": [0, 1], "active": [2], "recovery": [3, 4, 5]}, "scale": "fixed", "contact": "unverified", "wired": 0}
+    },
+    "commander": {
+      "class": null,
+      "attack": {"clip": "attack", "su": 18, "ac": 6, "rc": 24, "art": {"startup": [0, 1], "active": [2], "recovery": [3, 4, 5]}, "scale": "attack", "fill": 1.0, "contact": "unverified", "wired": 0},
+      "magic":  {"clip": "magic", "su": 18, "ac": 6, "rc": 24, "art": {"startup": [0], "active": [1], "recovery": [2]}, "scale": "fixed", "contact": "unverified", "wired": 0},
+      "brand":  {"clip": "brand", "su": 8, "ac": 4, "rc": 12, "art": {"startup": [0], "active": [1], "recovery": [2]}, "scale": "fixed", "contact": "unverified", "wired": 0}
+    }
+  }
+}

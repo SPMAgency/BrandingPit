@@ -1,0 +1,42 @@
+{
+  "_doc": "Atlas layout. Owner: Animations. One source for the Godot bake (tools/bake), the phone bake (src/render/commander_bake.js), the sprite player (src/render/units.js) and tools/timing_check.mjs. Columns are frames in clip order; rows are the baked directions.",
+  "version": 1,
+  "cell": {"w": 96, "h": 120, "footY": 114, "bodyPx": 92},
+  "_cell_doc": "footY: the ground line inside the cell. bodyPx: target height of an upright guard pose, leaving headroom for raised arms.",
+
+  "directions": [
+    {"row": 0, "name": "front34", "yawDeg": -45},
+    {"row": 1, "name": "side",    "yawDeg": -90},
+    {"row": 2, "name": "back34",  "yawDeg": -135}
+  ],
+  "_directions_doc": "Six headings from three rows: the player mirrors each row horizontally for the opposite side. yawDeg turns the model away from facing the camera (0 = facing the camera, -90 = facing screen right).",
+
+  "camera": {"pitchDeg": -44, "fovDeg": 20, "projection": "perspective"},
+  "_camera_doc": "pitchDeg measured from prototype/raid.html: camera height 1.12 x near distance, so 48 deg to the near row and 40 deg to the far row; 44 is the middle. Arena owns the board camera and is asked to confirm.",
+
+  "sheets": {
+    "fighter":   {"passes": ["col"], "clips": ["idle", "move", "attack", "cast", "flinch", "knockout", "victory"]},
+    "commander": {"passes": ["col", "mask"], "clips": ["idle", "move", "attack", "cast", "flinch", "knockout", "victory", "brand", "magic"]}
+  },
+
+  "clips": {
+    "idle":     {"frames": 6},
+    "move":     {"frames": 6},
+    "attack":   {"frames": 6},
+    "cast":     {"frames": 6},
+    "flinch":   {"frames": 2},
+    "knockout": {"frames": 2},
+    "victory":  {"frames": 4},
+    "brand":    {"frames": 3},
+    "magic":    {"frames": 3}
+  },
+
+  "budget": {
+    "_doc": "Decoded memory, RGBA 4 bytes per pixel. Checked by tools/timing_check.mjs.",
+    "fighterFrames": 32,
+    "commanderFrames": 38,
+    "fighterMB": 4.5,
+    "fightersOnScreen": 16,
+    "ceilingMB": 85
+  }
+}
