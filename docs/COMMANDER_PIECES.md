@@ -1,6 +1,8 @@
-# The commander: base body and cosmetic pieces — PROPOSAL 2026-11-06
+# The commander: base body and cosmetic pieces — APPROVED 2026-11-06
 
-**Status:** proposal for Doctor Def. Owner: Character Dev. The phone-bake that
+**Status:** approved by Doctor Def 2026-11-06 (class-neutral look, two pigment slots,
+6 faces + skin tint, one body type). Credits for the base body and first set are
+still asked for separately. Owner: Character Dev. The phone-bake that
 turns these pieces into an atlas is the Animations chat's spike
 (`src/render/commander_bake.js`); this doc defines what that spike receives.
 
@@ -118,7 +120,7 @@ About 51 credits for the base body plus 51 for one outfit set: **~102 credits**,
 asked for separately after the test fighter proves the line. Nothing is spent
 from this doc.
 
-## Decisions for Doctor Def
+## Decisions (approved by Doctor Def 2026-11-06)
 
 1. Commander look is class-neutral; the attribute is shown by a code effect. (Recommended.)
 2. Two pigment slots, main and trim, across the whole outfit. (Recommended.)
