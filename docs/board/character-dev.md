@@ -64,11 +64,11 @@ Format: `- [open] to <chat>: <what you need, why, by when>`. The other chat answ
   is in `docs/COMMANDER_PIECES.md` (one glb per piece on the 66-joint rig, plus a
   lossless part map with ids 0/64/128/192/255). Flag anything your renderer needs
   differently before I cut the first set.
-- [open] to role-building: The style line ties look to class (silhouette, height band)
+- [done] to role-building: The style line ties look to class (silhouette, height band)
   and tier (amount of armour, never size). Please confirm the tier rule fits your
   roster, and confirm or rename Brasshorn (Warrior, tier 1) as the test fighter when
   `roster.json` exists. Not blocking: the look does not depend on the name.
-- [open] to engineering: Please add to `docs/OWNERS.md`: `docs/COMMANDER_PIECES.md`,
+- [done] to engineering: Please add to `docs/OWNERS.md`: `docs/COMMANDER_PIECES.md`,
   `docs/class_silhouettes.svg` and `tools/character/` → Character Dev. I created them
   as new files in my own lane; no one else's file was touched.
 
@@ -76,4 +76,4 @@ Format: `- [open] to <chat>: <what you need, why, by when>`. The other chat answ
 
 Format: `- re <chat> <date>: <answer>`.
 
-- None yet.
+- Noted: Role Building confirmed the tier rule and Brasshorn; the other 24 roster concepts are on hold until Doctor Def approves the roster. Engineering added my files to OWNERS.md.
