@@ -1,0 +1,98 @@
+<title>Branding Pit Arena Bench</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Germania+One&family=Spline+Sans:wght@400;600;700&family=Spline+Sans+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: phone-first bench. The board stage at real game size on top, then the camera numbers, backgrounds, impact buttons and sliders stacked below. Single torch-lit dark look, same as the game. */
+:root{
+  --pit:#15111c; --stone:#221c2c; --stone-hi:#332a40; --line:#43385a;
+  --ink:#f1e9dc; --muted:#a99db6; --sigil:#f2b84b; --ember:#e86a3a; --frost:#8fe3ff;
+  --display:"Germania One","Palatino Linotype",Georgia,serif;
+  --body:"Spline Sans",system-ui,-apple-system,sans-serif;
+  --mono:"Spline Sans Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+html,body{background:var(--pit);color:var(--ink)}
+body{font-family:var(--body);font-size:14px;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:600px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px 28px;display:flex;flex-direction:column;gap:12px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+h1{font-family:var(--display);font-weight:400;font-size:24px;line-height:1;color:var(--sigil);margin:0}
+h1 small,.lbl{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500}
+h1 small{margin-bottom:4px}
+#perf{font-family:var(--mono);font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.stage{position:relative;height:min(616px,76dvh);border-radius:14px;overflow:hidden;background:var(--pit);border:1px solid var(--line)}
+canvas{display:block;width:100%;height:100%}
+.tag{position:absolute;left:8px;top:6px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);background:color-mix(in srgb,var(--pit) 80%,transparent);border:1px solid var(--line);border-radius:999px;padding:3px 9px;pointer-events:none}
+.scale{font-family:var(--mono);font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+section{display:flex;flex-direction:column;gap:8px}
+.cam{background:var(--stone);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-family:var(--mono);font-size:11.5px;line-height:1.5;color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:6px}
+button{font:inherit;font-size:13px;color:var(--ink);background:var(--stone-hi);border:1px solid var(--line);border-radius:10px;padding:7px 11px;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--sigil);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--ink);color:var(--pit);border-color:var(--ink)}
+button.boss{border-color:color-mix(in srgb,var(--ember) 70%,var(--line))}
+button.boss[aria-pressed="true"]{background:var(--ember);border-color:var(--ember);color:var(--pit)}
+#events button{flex:1 1 30%}
+.toggles{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;font-size:13px}
+.toggles label{display:flex;align-items:center;gap:8px}
+input[type=checkbox]{accent-color:var(--sigil);width:18px;height:18px}
+details{background:var(--stone);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+summary{cursor:pointer;font-weight:600}
+#sliders{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+#sliders label{display:grid;grid-template-columns:1fr auto;gap:2px 8px;font-size:12.5px;color:var(--muted)}
+#sliders output{font-family:var(--mono);color:var(--ink);font-variant-numeric:tabular-nums}
+#sliders input{grid-column:1/-1;width:100%;accent-color:var(--sigil)}
+.note{color:var(--muted);font-size:12.5px;line-height:1.45;margin:0;max-width:65ch}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1><small>Arena · camera and impact test</small>The Branding Pit</h1>
+    <div id="perf">— fps</div>
+  </header>
+
+  <div class="stage" id="stage">
+    <canvas id="pit" aria-label="Hex arena, 8 wide and 12 deep, with the bench row nearest you"></canvas>
+    <span class="tag" id="themeName">The Outer Pen</span>
+  </div>
+  <div class="scale" id="scale"></div>
+
+  <section>
+    <span class="lbl">Locked camera</span>
+    <div class="cam" id="camNums"></div>
+  </section>
+
+  <section>
+    <span class="lbl">Background by round</span>
+    <div class="row" id="rounds"></div>
+  </section>
+
+  <section>
+    <span class="lbl">Fire an impact</span>
+    <div class="row" id="events">
+      <button type="button" data-ev="hit">Hit</button>
+      <button type="button" data-ev="crit">Crit</button>
+      <button type="button" data-ev="ability">Ability hit</button>
+      <button type="button" data-ev="ko">Knockout</button>
+      <button type="button" data-ev="big">3-star ability</button>
+      <button type="button" data-ev="brand">Brand</button>
+    </div>
+    <div class="toggles">
+      <label for="auto"><input type="checkbox" id="auto" checked> Auto fight</label>
+      <label for="dense"><input type="checkbox" id="dense"> 16 a side</label>
+      <label for="guides"><input type="checkbox" id="guides"> Sprite cell guides</label>
+      <label for="reduced"><input type="checkbox" id="reduced"> Reduced motion</label>
+    </div>
+  </section>
+
+  <details>
+    <summary>Impact sliders</summary>
+    <div id="sliders"></div>
+    <button type="button" id="resetSliders" style="margin-top:10px">Reset to defaults</button>
+  </details>
+
+  <p class="note">The fighters are stand-ins drawn at the exact size and foot line a baked sprite will use. Turn on sprite cell guides to see each fighter's 96 × 120 cell and which of the three baked rows it would show. Hit-stop is Animations' number (their timing file), shown here so the feel reads right. Flashes never exceed three in a second, and reduced motion turns off every flash and shake.</p>
+</div>
+
+<!-- build: node tests/arena/build.mjs writes tests/arena/bench.single.html with the game files and bench.js inlined here -->
+<script src="bench.js"></script>
