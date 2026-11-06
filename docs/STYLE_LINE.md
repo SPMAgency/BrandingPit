@@ -1,8 +1,14 @@
-# The style line — DRAFT 2026-11-06, awaiting Doctor Def
+# The style line — LOCKED 2026-11-06 (Doctor Def), colours open
 
-**Status:** draft for approval. Nothing is generated until Doctor Def approves it
-in chat. Once approved, this header changes to LOCKED and the line is not reopened
-(Blacktop's lesson: six of seven characters regenerated because the line came late).
+**Status:** locked: base line, class lines, shapes, heights, creature, face, tier
+and rig rules. Do not reopen (Blacktop's lesson: six of seven characters regenerated
+because the line came late).
+
+**Colours are NOT locked.** Doctor Def, 2026-11-06: colour is not important until
+we deem it important. Until then every model gets a **random** main and accent colour,
+rolled and recorded in its manifest (seed included), and the class colours below are
+reference only. Two readability guards still apply because they are not taste: nothing
+near-black (the outline swallows it) and never mostly red or green (the team ring).
 
 Every Meshy prompt for a fighter or boss is built in this order, and nothing later
 may contradict anything earlier:
@@ -58,8 +64,10 @@ Height bands are relative to the Warrior (1.00) at the top of the head, headwear
 included. They only work if the bake keeps one world scale for every fighter rather
 than fitting each model to its cell (request to Animations on the board).
 
-Accent colours come from the class colours already in the Raid prototype, so the
-trait panel, the unit card and the model all agree:
+**Reference only while colours are open.** These are the prototype's class colours; a
+later colour pass may adopt them as model accents so trait panel, unit card and model
+agree. Until then, the accent words in the class lines above are swapped for the
+model's random roll:
 
 | class | prototype colour | prompt words |
 |---|---|---|
@@ -97,7 +105,8 @@ rules keep that from breaking the class read or the rig:
 
 - **Main colour** is a neutral or earthy tone: cream, sand, stone, slate, bark, moss.
   Skin, fur or scale counts as part of it.
-- **Accent** is the class colour, on roughly a quarter of the visible surface at most.
+- **Accent** is the model's rolled accent (later: possibly the class colour), on roughly a
+  quarter of the visible surface at most.
 - **No large saturated red or green.** Team is shown by the ring under the feet (green
   yours, red wild); a mostly red or mostly green fighter fights its own ring.
 - **Nothing near-black.** The engine draws the outline; anything darker than a
@@ -144,7 +153,7 @@ boss in memory at a time.
 3. **Signal** is the largest shape and belongs to this class only; creature parts are
    smaller and close to the body.
 4. **Surface:** flat panels, no pattern that turns to noise at phone size.
-5. **Colour:** class accent present on no more than about a quarter of the body;
+5. **Colour:** accent on no more than about a quarter of the body;
    nothing near-black; not mostly red or green.
 6. **E10+:** no blood, scars or gore; fully clothed; nothing suggestive; hands empty.
 7. **Rig-safe:** strict A-pose, open empty hands, clear gap between the legs, legs
@@ -193,8 +202,18 @@ Own details, appended after the base and class lines:
 > guards, cheerful confident grin, sleeveless cream hide vest, plain brown trousers,
 > soft brown boots, rust-red round shoulder guards and rust-red forearm wraps.
 
+**Colour roll for this run** (seed 1793971294): main **pale gold**, accent **lilac**.
+Used in place of the colours above, and in place of "Rust-red accent" in the Warrior
+class line:
+
+> Brasshorn: stocky ram-like fighter with pale gold short fur, two curled lilac horns
+> tight against the sides of the head, smaller than the shoulder guards, cheerful
+> confident grin, sleeveless pale gold hide vest, plain pale gold trousers, soft pale
+> gold boots, lilac round shoulder guards and lilac forearm wraps.
+
 ## Decision log
 
 | date | decision |
 |---|---|
-| 2026-11-06 | Draft written (Character Dev). Awaiting Doctor Def. |
+| 2026-11-06 | Draft written (Character Dev). |
+| 2026-11-06 | **Locked by Doctor Def**, except colours: random per model until colour is deemed important. Brasshorn test fighter and 51 credits approved. |
