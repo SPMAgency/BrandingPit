@@ -9,6 +9,7 @@ Carried into this chat's next session. Update it at the end of every session.
 - Five files have two layers: the keys `load.js` reads today (unchanged) plus the full
   structure. The gate's drift checks keep them equal. Change a number in both.
 - `roster.fighters` = live prototype 12. `roster.launch_roster` = 25-fighter DRAFT.
+- `balance.json` `patch_job` mirrors Online & Accounts' balance job (`src/online/balance_job.js`); `ai_fill` is their AI board curve, now owned here. Each patch: review the job's output, copy multipliers into `patch.class_mods` hp and atk, append history.
 - Proposal doc for Doctor Def (roster, relics, magic, bosses, 4 decisions):
   https://claude.ai/artifact/HCAbnuzNJ3wVHeiTxJCyVz
 

@@ -185,6 +185,16 @@ const STYLE = /\b(wings?|winged)\b|-winged|\b(towering|hulking|giant|tiny|huge)\
 for (const f of F) if (STYLE.test(f.concept)) fail(`roster.${f.id}: concept breaks the style line ("${f.concept.match(STYLE)[0]}")`);
 for (const b of Object.values(bosses.pool).flat()) if (/\b(wings?|winged)\b|-winged/i.test(b.concept)) fail(`bosses.${b.id}: no wings (style line)`);
 
+// AI fill curve (Online & Accounts reads it): 13 rounds, and tier 4/5 equal the pen odds.
+const ai = balance.ai_fill;
+for (const k of ['units', 'twoStar', 'threeStar', 'items', 'tier4', 'tier5']) if (ai[k]?.length !== 13) fail(`ai_fill.${k}: needs 13 rounds`);
+for (let r = 1; r <= 13; r++) {
+  const row = balance.pen_tier_odds.by_round[r];
+  if (row && (ai.tier4[r - 1] !== row[3] || ai.tier5[r - 1] !== row[4])) fail(`drift: ai_fill tier 4/5 differ from pen odds in round ${r}`);
+}
+if (ai.units.some((n) => n > balance.slots.board)) fail('ai_fill: more units than board slots');
+for (const k of ['bandPoints', 'minPct', 'maxPct', 'fullAt', 'minRuns', 'lifetimeCap']) if (typeof balance.patch_job[k] !== 'number') fail(`patch_job.${k} missing`);
+
 // Report
 const t = [1, 2, 3, 4, 5].map((n) => F.filter((f) => f.tier === n).length);
 console.log(`roster: ${F.length} fighters, by tier ${t.join(' / ')}`);

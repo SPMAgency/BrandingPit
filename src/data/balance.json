@@ -1,5 +1,5 @@
 {
-  "_note": "Owner: Role Building. Every run and fight number in one place, plus the per-patch layer. Owner: Role Building. The per-patch balance job (Online & Accounts) may change ONLY the 'patch' block, under the rules in 'patch_job'; everything else is changed by Role Building. The fight code multiplies base stats by patch.class_mods, then patch.fighter_mods, then the active Pit Condition, so a balance change never needs code. Saved ghosts always fight on the current file. The keys the game reads today through src/data/load.js (Engineering) are kept exactly as they were. Everything else is Role Building's full structure; tests/role-building/data_check.mjs fails if the two ever disagree.",
+  "_note": "Owner: Role Building. Every run and fight number in one place, plus the per-patch layer. Owner: Role Building. The per-patch balance job (src/online/balance_job.js, Online & Accounts) reads 'patch_job' and proposes one multiplier per class; Role Building reviews it and writes it into 'patch.class_mods' (same value into hp and atk). Nothing else changes per patch. The fight code multiplies base stats by patch.class_mods, then patch.fighter_mods, then the active Pit Condition, so a balance change never needs code. Saved ghosts always fight on the current file. The keys the game reads today through src/data/load.js (Engineering) are kept exactly as they were. Everything else is Role Building's full structure; tests/role-building/data_check.mjs fails if the two ever disagree.",
   "star": {
     "atk": [
       1,
@@ -227,7 +227,7 @@
     "min_damage": 1
   },
   "patch": {
-    "_about": "The only block the balance job writes. 1.0 = no change. Fields: hp, atk, as (attack speed), ability_power, heal_power, cc_seconds_add (seconds added to that class's own stuns and roots).",
+    "_about": "Written by Role Building from the balance job's reviewed output, once per patch. 1.0 = no change. The game reads class_mods[class].hp and .atk (the job's one multiplier goes into both); as, ability_power, heal_power and cc_seconds_add are for hand tuning and Pit Conditions.",
     "version": "0.1.0",
     "date": "2026-11-06",
     "class_mods": {
@@ -301,46 +301,24 @@
     "history": []
   },
   "patch_job": {
-    "_about": "Rules the Online & Accounts balance job follows each patch (design, layer 5). Numbers marked PROPOSED fill gaps the design leaves.",
-    "source": "design",
-    "measure": "class share of 12-win runs: the fraction of 12-win final boards on which the class is at an active rank",
-    "compare_to": "average share across the 8 primary classes",
-    "threshold_points": 5,
-    "step_min": 0.03,
-    "step_max": 0.05,
-    "step_rule": {
-      "value": "3% at 5 points from average, rising linearly to 5% at 10 points or more",
-      "source": "PROPOSED"
-    },
-    "fields_changed": {
-      "value": [
-        "hp",
-        "atk"
-      ],
-      "source": "PROPOSED"
-    },
-    "direction": "above average: multiply by (1 - step); below average: multiply by (1 + step)",
-    "min_12_win_runs_in_sample": {
-      "value": 200,
-      "source": "PROPOSED"
-    },
-    "mod_floor": {
-      "value": 0.8,
-      "source": "PROPOSED"
-    },
-    "mod_ceiling": {
-      "value": 1.2,
-      "source": "PROPOSED"
-    },
-    "max_changes_per_class_per_patch": {
-      "value": 1,
-      "source": "PROPOSED"
-    },
-    "output": "update patch.class_mods, bump patch.version, append one history row per change {class, field, from, to, share, average}, and write short patch notes",
-    "secondary_attributes": {
-      "value": "not adjusted by the job (too few tier 5 samples); Role Building tunes them by hand",
-      "source": "PROPOSED"
-    }
+    "_about": "Rules the balance job follows (design, layer 5). Field names match BALANCE in src/online/balance_job.js so the job can read them from here.",
+    "source": "design + Online & Accounts implementation",
+    "measure": "each class's share of fighters on the final boards of 12-win runs (every run weighted equally, commander left out, tier 5 counted by primary class)",
+    "compare_to": "average share across the 8 primary classes (12.5 points)",
+    "bandPoints": 5,
+    "minPct": 3,
+    "maxPct": 5,
+    "fullAt": 5,
+    "minRuns": 100,
+    "lifetimeCap": 0.25,
+    "stats": [
+      "hp",
+      "atk"
+    ],
+    "direction": "above the band: multiply by (1 - pct); below: by (1 + pct). pct rises from minPct just over the band to maxPct at bandPoints + fullAt.",
+    "over_lifetime_cap": "flag for Role Building, do not apply",
+    "output": "one multiplier per class + a short patch note; Role Building copies it into patch.class_mods, bumps patch.version and appends history rows {class, share, average, from, to}",
+    "secondary_attributes": "not adjusted by the job; Role Building tunes them by hand"
   },
   "pit_conditions": {
     "_about": "Weekly modifier (design, layer 6). Same fields as patch.class_mods, applied on top. Role Building writes the list; Engineering or the live job sets 'active'.",
@@ -404,5 +382,99 @@
         "source": "PROPOSED"
       }
     }
+  },
+  "ai_fill": {
+    "_about": "Difficulty curve for the seeded AI boards that fill empty ghost slots, by round 1-13. Moved here from src/online/matching.js (AI_CURVE) at Online & Accounts' request; tier4/tier5 must equal pen_tier_odds (checked).",
+    "source": "Online & Accounts",
+    "units": [
+      2,
+      3,
+      3,
+      4,
+      4,
+      5,
+      5,
+      6,
+      6,
+      7,
+      7,
+      7,
+      7
+    ],
+    "twoStar": [
+      0,
+      0,
+      0,
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75
+    ],
+    "threeStar": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.03,
+      0.05,
+      0.08,
+      0.1,
+      0.15
+    ],
+    "items": [
+      0,
+      0,
+      0,
+      1,
+      1,
+      2,
+      2,
+      3,
+      3,
+      4,
+      4,
+      5,
+      6
+    ],
+    "tier4": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.04,
+      0.06,
+      0.08,
+      0.1,
+      0.12,
+      0.14,
+      0.14
+    ],
+    "tier5": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.06
+    ]
   }
 }

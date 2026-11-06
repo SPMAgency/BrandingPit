@@ -45,8 +45,10 @@ Everything else in each file is the full structure (ids, per-rank numbers, sourc
 
 - **Ids are stable.** Code refers to `warrior`, `brasshorn`, `cinder_crown`; display text comes from `name`.
 - **Balance never needs code.** The fight multiplies base stats by `balance.patch.class_mods`, then
-  `patch.fighter_mods`, then the active Pit Condition. The per-patch job (Online & Accounts)
-  writes only the `patch` block, under `patch_job`. Saved ghosts fight on the current file.
+  `patch.fighter_mods`, then the active Pit Condition. The per-patch job (`src/online/balance_job.js`)
+  reads its rules from `patch_job` and proposes one multiplier per class; Role Building reviews it and
+  writes it into `patch.class_mods` (hp and atk). The AI fill boards read `ai_fill`. Saved ghosts fight
+  on the current file.
 - **Secondary ranks:** read `ranks`. If Doctor Def approves the re-cut, `proposed_ranks` will replace `ranks`.
 
 ## Design vs prototype, for Actions/Functions

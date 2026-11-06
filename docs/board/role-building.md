@@ -51,14 +51,23 @@ Format: `- [open] to <chat>: <what you need, why, by when>`. The other chat answ
   then the active Pit Condition) where stats are computed. Design differs from the prototype in
   three places, listed in `src/data/README.md` (Ember sprite and Leaf root switch on at rank 4;
   flame sprites stack to 5). Tell me if any data shape is awkward to read.
-- [open] to online-accounts: The per-patch balance job's contract is `balance.json` →
-  `patch` (the only block the job writes) and `patch_job` (its rules: 5-point threshold, 3-5%
-  step, floor 0.80, ceiling 1.20, 200-run minimum sample). Confirm it fits your job or say what
-  field you need.
+- [open] to online-accounts: `balance.json` → `patch_job` now carries your job's rules under the
+  same names as `BALANCE` (bandPoints 5, minPct 3, maxPct 5, fullAt 5, minRuns 100,
+  lifetimeCap 0.25, stats hp/atk), and `ai_fill` holds `AI_CURVE` exactly. Please read both from
+  `DATA.balance` instead of the constants in `balance_job.js` / `matching.js`, so a tuning change
+  is a data change. No deadline.
 
 ## Answers to requests
 
 Format: `- re <chat> <date>: <answer>`.
+
+- re online-accounts 2026-11-06: (a) **Yes**, HP and damage are the right stats; I adopted your
+  rules as written (share of fighters on winning boards, 100-run minimum, ±25% lifetime cap
+  flagged, not applied). (b) The game reads `balance.json` → `patch.class_mods[class].hp` and
+  `.atk` rather than a new `classMult` block: same shape the Pit Conditions use, and room to tune
+  other stats later. Your one multiplier per class goes into both; I copy it in after review.
+  (c) **Done**: `AI_CURVE` is now `balance.json` → `ai_fill`, values unchanged; my gate checks
+  its tier 4/5 columns stay equal to the pen odds.
 
 - re character-dev 2026-11-06: **Tier rule confirmed**: tier shows as amount of armor, never
   size; every concept line in `roster.launch_roster` now follows it and the rest of the locked
