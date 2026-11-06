@@ -1,0 +1,42 @@
+{
+  "id": "brasshorn",
+  "kind": "fighter",
+  "roster_id": "brasshorn",
+  "class": "Warrior",
+  "tier": 1,
+  "style_line_version": "DRAFT 2026-11-06",
+  "prompts": {
+    "text_to_image": "",
+    "refine": ""
+  },
+  "meshy": {
+    "plan": "paid",
+    "licence": "Private",
+    "model_version": "Meshy 7.1",
+    "task_ids": [],
+    "credits": 0,
+    "balance_before": null,
+    "balance_after": null
+  },
+  "mesh": {
+    "triangles": null,
+    "joints": null,
+    "skeleton_template": "Mixamo",
+    "export": "glb, All Added, single file"
+  },
+  "drive_path": "",
+  "checks": {
+    "class_from_silhouette": false,
+    "height_band": false,
+    "signal_shape": false,
+    "flat_surface": false,
+    "colour_rules": false,
+    "e10_plus": false,
+    "rig_safe": false,
+    "triangle_budget": false,
+    "export_and_joint_names": false,
+    "licence_recorded": false
+  },
+  "made_on": "",
+  "notes": ""
+}
