@@ -14,9 +14,10 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createTiming, slug } from '../src/anim/timing.js';
+import { loadMoveTiming } from './bake/load_timing.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const { createTiming, slug } = loadMoveTiming(ROOT);
 const read = (p) => JSON.parse(readFileSync(join(ROOT, p), 'utf8'));
 const data = read('src/data/move_timing.json');
 const layout = read('assets/atlases/layout.json');
@@ -24,12 +25,12 @@ const errs = [];
 const warns = [];
 const fail = (m) => errs.push(m);
 
-// The eight primary classes from the design doc. Once Role Building ships
-// src/data/classes.json, its keys win.
+// Every class with an ability needs an attack and a cast. The list comes from
+// Role Building's src/data/abilities.json, so a new ability cannot ship
+// without timing. Before that file existed: the design doc's eight.
 let CLASSES = ['Warrior', 'Healer', 'Mage', 'Judge Mark', 'Ember Keeper', 'Gusting Shallow', 'Quiet Concern', 'Leaf in the Wind'];
-if (existsSync(join(ROOT, 'src/data/classes.json'))) {
-  const c = read('src/data/classes.json');
-  const keys = Array.isArray(c) ? c.map((x) => x.name || x.id) : Object.keys(c.classes || c);
+if (existsSync(join(ROOT, 'src/data/abilities.json'))) {
+  const keys = Object.keys(read('src/data/abilities.json')).filter((k) => !k.startsWith('_'));
   if (keys.length) CLASSES = keys;
 }
 const REQUIRED = Object.fromEntries(CLASSES.map((c) => [slug(c), ['attack', 'cast']]));

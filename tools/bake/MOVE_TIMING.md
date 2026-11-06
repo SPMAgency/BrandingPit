@@ -11,7 +11,8 @@ for an auto-battler is listed at the bottom.
 | file | role |
 |---|---|
 | `src/data/move_timing.json` | the data: one entry per class attack and per class ability, plus the commander's attack, magic cast and brand |
-| `src/anim/timing.js` | the runtime: pure functions, no DOM, safe in a headless fight or balance run |
+| `src/anim/timing.js` | the runtime: a plain script defining one global, `MoveTiming`; pure functions, no DOM, safe in a headless fight or balance run |
+| `tools/bake/load_timing.mjs` | loads the runtime into Node tools exactly as the browser build does |
 | `assets/atlases/layout.json` | which baked frames each clip has; the art indices below point into it |
 | `tools/timing_check.mjs` | the gate: `node tools/timing_check.mjs` |
 | `tests/animations/timing.test.mjs` | `node --test tests/animations/*.test.mjs` |
@@ -60,8 +61,9 @@ and fires within 0.4 s.
 ## API
 
 ```js
-import { createTiming } from '../anim/timing.js';
-const T = createTiming(moveTimingJson);       // or: await loadTiming(url)
+
+// once Engineering adds it to src/manifest.json (data: move_timing; order: src/anim/timing.js before src/sim/)
+const T = MoveTiming.createTiming(DATA.move_timing);
 
 const mv = T.start(cls, kind, { as });        // cls: 'Warrior' | 'warrior' | 'cmd' ...
                                               // kind: 'attack' | 'cast' | 'magic' | 'brand'
@@ -118,7 +120,7 @@ fighter does if its target is defeated mid-swing is Actions/Functions' call.
 | `cancel`, `commit`, `hold` | dropped | no player input during a fight |
 | beats (multi-stage slams) | dropped for now | no slams in the clip list |
 | data copied into two game files + drift check | one JSON, one runtime, the check imports the runtime | nothing to drift |
-| Python check | Node check | it runs the game's own runtime |
+| Python check | Node check | it runs the game's own runtime, loaded the way the build loads it |
 
 ## Open
 
