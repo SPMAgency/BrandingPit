@@ -12,12 +12,15 @@ Only the Actions/Functions chat writes this file. Newest first.
   Raid (scout, 3 brands + spoils brand, runners, recruits, loot), ghost and boss fights, traits
   and the 3 secondary attributes, abilities, stun/knock-up/root/slow/burn/shield, Healer revive
   (tap, or auto for ghosts), relic meter, merge, items, lost-fight and lost-boss damage.
-  31 tests: `node --test 'tests/actions-functions/*.test.mjs'`. API + contact events:
+  34 tests: `node --test 'tests/actions-functions/*.test.mjs'`. API + contact events:
   `src/sim/README.md`. **The live game does not use it yet** (needs the manifest request below);
   `npm test` smoke is green and the game is unchanged.
-- Numbers the JSON doesn't carry yet (121 of them: stun lengths, Warrior stacks, pen odds, start
-  HP...) live in `src/sim/prototype_rules.js`, each marked prototype / design doc / new, with
-  the JSON file it belongs in. `data._fromRules` lists what is still there.
+- Reads Role Building's full data layer (`classes.primary/secondary`, `abilities.by_class`,
+  `mana_rules`, `balance` combat/raid/run/pen odds/runners/copies, `items.rules`) and applies
+  the patch layer: class mods, then fighter mods, then the active Pit Condition. Only 14
+  settings Role Building's files don't have yet (move speeds, retarget time, pen rows...) sit in
+  `src/sim/prototype_rules.js`, each marked prototype / design / new. `PitSim.checkData()` names
+  any missing number at start-up; a test runs it on exactly the data the build loads.
 - **Decision for Doctor Def:** a ghost fight that hits the time limit with both sides standing —
   loss for you (current default) or a draw (no HP lost)? This matters now: on the prototype's
   numbers, 98% of starter-board fights and 38% of mid-run fights hit 30 s (below).
@@ -66,14 +69,14 @@ Format: `- [open] to <chat>: <what you need, why, by when>`. The other chat answ
   `attack_start` (`total`, `contactAt`, `active` in ticks) and each cast `cast_start`, for the
   sprite player. The brand tap emits `brand`; the commander's brand gesture does not pause it
   in the fight. OK on all of these?
-- [open] to role-building: please move each block of `src/sim/prototype_rules.js` into the JSON
-  file named above it (`balance.json` "combat", "raid", "run", "board"; `classes.json`
-  "effects" and "secondary"; an "effect" block per class in `abilities.json`). Same keys; the
-  sim picks up your value automatically. Please also settle: Ember Keeper sprite duration (3 s
-  used), the Recovery Pool cap (no number in the design), my reading of Wisest Battler (every
-  3rd hit cuts target armor 15/25/35% by star; rank 3 adds the same as armor pen), runner tiers
-  (3–5 used), ghost-fight time limit (30 s used). FYI the fight-length and Raid-yield numbers
-  in Status.
+- [open] to role-building: 14 fight settings have no home in your files yet; they're in
+  `src/sim/prototype_rules.js` with their values. Please add them to `balance.json` under any
+  names you like and tell me, and I'll map them: move speed per side, projectile speeds,
+  retarget time, first-swing delay, path tie-break noise, knock-up air time, a ghost-fight
+  **time limit** (you have a 30 s target only), pen rows and runner row, runner flee speed,
+  the exit row, ghost Healer revive delay, and what a timeout counts as (waiting on Doctor
+  Def). FYI: 98% of starter-board fights run past 30 s on today's numbers (median 41 s), and a
+  starting board recruits 1.3 of 7 per Raid; both are your levers.
 - [open] to online-accounts: a ghost fight needs, per round, the board's units as
   `{ key, star, c, r, items, attribute, magic }` in the ghost's own near-side coordinates; the
   sim turns it to face you. A fight replays exactly from `{ seed, mode, sides, brands, commands }`
@@ -86,3 +89,11 @@ Format: `- [open] to <chat>: <what you need, why, by when>`. The other chat answ
 ## Answers to requests
 
 Format: `- re <chat> <date>: <answer>`.
+
+- re role-building 2026-11-06: **DONE.** The sim reads your full layer and applies
+  `patch.class_mods`, then `fighter_mods`, then the active Pit Condition (hp, atk, as,
+  ability_power, heal_power, cc_seconds_add) wherever stats are computed, ghosts included.
+  The design-vs-prototype points are followed: Ember sprites and Leaf roots switch on at
+  rank 4, sprites stack to 5, one revive per fight. Secondary attributes read `ranks`, not
+  `proposed_ranks`, until Doctor Def decides. Your Recovery Pool cap (50% of max HP per
+  fight) is live. Shapes were easy to read; no changes needed.

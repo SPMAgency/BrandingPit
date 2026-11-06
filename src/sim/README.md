@@ -5,7 +5,7 @@ Same seed + same boards + same player taps = the same fight on every phone, at
 any frame rate. Rendering, sound and effects **read** it; nothing outside this
 folder writes to it.
 
-Tests: `node --test 'tests/actions-functions/*.test.mjs'` (31 tests, about 3 s). Loader: `tests/actions-functions/load_sim.mjs`.
+Tests: `node --test 'tests/actions-functions/*.test.mjs'` (34 tests, about 4 s). Loader: `tests/actions-functions/load_sim.mjs`.
 
 ## Using it (for Engineering's main.js)
 
@@ -84,28 +84,21 @@ Hit-stop: `impact.hitstopMs` from the timing file.
 
 ## Data the sim reads (for Role Building)
 
-`PitSim.fromGameData` maps your files into the keys below. What it reads today:
-`balance.star/raid/slots`, `classes.traits/counter`, `abilities` (name, mana),
-`roster.fighters/commander`, `items`. Everything else is in
-`src/sim/prototype_rules.js`, one block per target file; move a block into your JSON
-under the same keys (`balance.json` "board", "combat", "impact", "raid", "run";
-`classes.json` "effects", "secondary"; `abilities.json` an "effect" per class) and
-the sim takes yours.
+`PitSim.fromGameData(DATA, PIT_PROTOTYPE_RULES)` reads Role Building's full layer:
+`classes.primary` / `secondary` (per-rank tables by effect `type`), `classes.counter`,
+`classes.default_stun_seconds`, `abilities.by_class` (effect `type` damage / heal /
+shield, with `before` / `then` riders) and `mana_rules`, `roster.fighters` /
+`commander`, `items` and `items.rules`, and in `balance`: `star`, `combat`, `raid`
+(brands, lures, pen size, wild scale, runners), `pen_tier_odds`, `copies_per_run`,
+`run`, `patch` and `pit_conditions`. `bosses.rules.on_loss` when loaded.
 
-| key | used for |
-|---|---|
-| `board` | `cols, rows, exitRow` |
-| `combat` | crit, armor formula constant, default armor/MR, mana per attack and per hit, damage jitter, retarget time, first-attack delay, path jitter, move speed per side, projectile speed, stun and knock-up length, star multipliers, item slots, ghost-fight time limit |
-| `impact.hitStopMs` | hit-stop on big hits |
-| `raid` | seconds, scout seconds, brands, pen rows, runner row, pen size by round, pen odds by round (tier 1–5), runner tiers, flee window, runner speed and HP, loot chance, lure share, pen strength by round |
-| `run` | start HP, loss per unit, loss per commander, boss-loss HP fraction, win target, bench and board size, what a timeout counts as |
-| `counter` | `bonus`, `beats` (the wheel) |
-| `classes` | per class / secondary attribute: `ranks` plus its effect arrays (indexed by rank) |
-| `abilities` | per class: `mana, kind` (`strike`, `cleave`, `heal`, `shield`) and riders (`mult, dmgType, projectile, canCrit, forceCrit, stunSec, knockup, rootSec, blink, burnSec, pct, sec, flat, anyRange`) |
-| `roster` | per fighter: `cls, secondary, tier, hp, atk, as, range, armor, mr` |
-| `commander` | base stats; its magic attack comes in as `unit.magic` (same ability vocabulary) |
-| `items` | `components`, `recipes`, `stats` |
-| `timingFallback` | attack/cast frames until the timing file exists |
+The patch layer multiplies stats in this order: `patch.class_mods[class]`, then
+`patch.fighter_mods[id]`, then the active Pit Condition's `class_mods`
+(hp, atk, as, ability_power, heal_power, cc_seconds_add).
+
+What the files don't carry yet comes from `src/sim/prototype_rules.js` and is listed
+in `data._fromRules`. `PitSim.checkData(data)` returns any required value that is
+missing (empty list = good); call it at start-up.
 
 New magic attacks, abilities and bosses that fit the vocabulary above need no
 code. Anything that doesn't: post the effect on the board and I add a `kind`.
