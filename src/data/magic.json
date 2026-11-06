@@ -1,0 +1,38 @@
+{
+  "_about": "Commander magic attacks by rarity. Owner: Role Building. The commander holds one at a time and casts it automatically when its mana is full. Each ghost-fight win offers one: take it (the old one is deleted) or sacrifice it for 1 extra brand next Raid. Learned attacks last the run; a Legendary learned once joins the player's unlock pool. Rules are from the design doc; every attack and number below is PROPOSED. Each attack's look is a code effect (Arena), cast on one generic commander clip (Animations).",
+  "schema": 1,
+  "status": "DRAFT",
+  "casting": {
+    "source": "PROPOSED",
+    "uses_mana": true,
+    "mana_rules": "same as fighters (abilities.json mana_rules)",
+    "scales_with": "commander attack damage",
+    "barred_while_commander_knocked_out": true,
+    "note": "The design says the commander casts automatically mid-fight; PROPOSED that it fills a mana bar like any fighter, so players can read when the cast is coming."
+  },
+  "offer": {
+    "source": "PROPOSED",
+    "rarity_weights": { "common": 40, "uncommon": 30, "rare": 18, "epic": 9, "legendary": 3 },
+    "streak_bonus": { "per_win_after_first": { "epic": 1.0, "legendary": 0.5 }, "cap": { "epic": 4.0, "legendary": 2.0 } },
+    "boost_rule": "A boss's loot boost multiplies that rarity's weight, as for relics.",
+    "note": "Design: streaks raise Epic and Legendary odds slightly. At the cap a hot streak takes Legendary from 3% to about 5%."
+  },
+  "attacks": {
+    "spark_toss":        { "name": "Spark Toss",        "rarity": "common",    "mana": 50,  "effect": { "type": "damage", "target": "current", "atk_mult": 2.0, "damage_type": "magic" }, "text": "Hurls a spark at the current target for 200% attack damage as magic." },
+    "stone_skin":        { "name": "Stone Skin",        "rarity": "common",    "mana": 60,  "effect": { "type": "shield", "target": "self", "max_hp_mult": 0.25, "seconds": 4.0 }, "text": "The commander gains a shield worth 25% of its max HP for 4 s." },
+    "rallying_cry":      { "name": "Rallying Cry",      "rarity": "common",    "mana": 60,  "effect": { "type": "buff", "target": "allies_within", "radius": 2, "as": 0.15, "seconds": 4.0 }, "text": "Allies within 2 hexes gain 15% attack speed for 4 s." },
+    "pebble_volley":     { "name": "Pebble Volley",     "rarity": "common",    "mana": 60,  "effect": { "type": "damage", "target": "random_enemies", "count": 3, "atk_mult": 0.8, "damage_type": "physical" }, "text": "Three stones strike random enemies for 80% attack damage each." },
+    "root_snare":        { "name": "Root Snare",        "rarity": "uncommon",  "mana": 70,  "effect": { "type": "damage", "target": "current_and_adjacent_one", "atk_mult": 1.2, "damage_type": "magic", "then": { "type": "root", "seconds": 1.5 } }, "text": "Vines grip the target and one enemy beside it: 120% as magic and rooted for 1.5 s." },
+    "mending_light":     { "name": "Mending Light",     "rarity": "uncommon",  "mana": 70,  "effect": { "type": "heal", "target": "lowest_hp_fraction_ally", "max_hp_mult": 0.20, "self_max_hp_mult": 0.10 }, "text": "Heals the most hurt ally for 20% of its max HP and the commander for 10%." },
+    "flame_ring":        { "name": "Flame Ring",        "rarity": "uncommon",  "mana": 70,  "effect": { "type": "damage", "target": "enemies_adjacent_to_self", "atk_mult": 1.5, "damage_type": "magic", "then": { "type": "burn", "max_hp_per_s": 0.03, "seconds": 2.0 } }, "text": "A ring of flame hits every adjacent enemy for 150% as magic and burns it for 2 s." },
+    "gale_lance":        { "name": "Gale Lance",        "rarity": "rare",      "mana": 80,  "effect": { "type": "damage", "target": "line", "length": 4, "atk_mult": 2.2, "damage_type": "magic", "then": { "type": "stun", "seconds": 1.0, "knockup": true } }, "text": "A spear of wind pierces 4 hexes: 220% as magic, knocking each enemy up for 1.0 s." },
+    "sigil_ward":        { "name": "Sigil Ward",        "rarity": "rare",      "mana": 80,  "effect": { "type": "shield", "target": "all_allies", "max_hp_mult": 0.15, "seconds": 4.0 }, "text": "Every ally gains a shield worth 15% of its max HP for 4 s." },
+    "thunder_clap":      { "name": "Thunder Clap",      "rarity": "rare",      "mana": 80,  "effect": { "type": "damage", "target": "enemies_within", "radius": 1, "atk_mult": 1.2, "damage_type": "magic", "then": { "type": "stun", "seconds": 1.5 } }, "text": "Claps thunder: enemies within 1 hex take 120% as magic and are stunned for 1.5 s." },
+    "meteor_brand":      { "name": "Meteor Brand",      "rarity": "epic",      "mana": 90,  "effect": { "type": "damage", "target": "highest_hp_enemy_area", "radius": 1, "atk_mult": 3.5, "damage_type": "magic", "then": { "type": "burn", "max_hp_per_s": 0.03, "seconds": 3.0 } }, "text": "A glowing sigil-meteor lands on the healthiest enemy: 350% as magic around it, then burns." },
+    "war_banner":        { "name": "War Banner",        "rarity": "epic",      "mana": 90,  "effect": { "type": "buff", "target": "all_allies", "atk": 0.25, "as": 0.15, "seconds": 6.0 }, "text": "Plants a banner: all allies gain 25% attack damage and 15% attack speed for 6 s." },
+    "tidal_pull":        { "name": "Tidal Pull",        "rarity": "epic",      "mana": 90,  "effect": { "type": "pull", "target": "farthest_enemies", "count": 3, "atk_mult": 1.5, "damage_type": "magic", "then": { "type": "stun", "seconds": 1.0 } }, "text": "Drags the 3 farthest enemies toward the commander: 150% as magic and stunned for 1.0 s." },
+    "verdict_of_the_pit":{ "name": "Verdict of the Pit","rarity": "legendary", "mana": 100, "effect": { "type": "damage", "target": "all_enemies", "max_hp_mult": 0.15, "damage_type": "true", "then": { "type": "stun", "seconds": 1.0 } }, "text": "Every enemy takes 15% of its max HP as true damage and is stunned for 1.0 s." },
+    "aurora_gate":       { "name": "Aurora Gate",       "rarity": "legendary", "mana": 100, "effect": { "type": "heal", "target": "all_allies", "max_hp_mult": 0.30, "cleanse": ["stun", "root", "slow", "burn"] }, "text": "All allies heal 30% of their max HP and shake off stuns, roots, slows and burns." },
+    "storm_of_brands":   { "name": "Storm of Brands",   "rarity": "legendary", "mana": 100, "effect": { "type": "damage", "target": "random_enemies", "count": 6, "atk_mult": 1.8, "damage_type": "magic", "then": { "type": "slow", "seconds": 2.0, "as_mult": 0.7 } }, "text": "Six sigils strike random enemies for 180% as magic each and slow them for 2 s." }
+  }
+}

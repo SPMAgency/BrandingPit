@@ -1,5 +1,5 @@
 {
-  "_note": "Owner: Role Building. Every tunable rule number. The per-patch balance job (Online & Accounts) edits this through Role Building.",
+  "_note": "Owner: Role Building. Every run and fight number in one place, plus the per-patch layer. Owner: Role Building. The per-patch balance job (Online & Accounts) may change ONLY the 'patch' block, under the rules in 'patch_job'; everything else is changed by Role Building. The fight code multiplies base stats by patch.class_mods, then patch.fighter_mods, then the active Pit Condition, so a balance change never needs code. Saved ghosts always fight on the current file. The keys the game reads today through src/data/load.js (Engineering) are kept exactly as they were. Everything else is Role Building's full structure; tests/role-building/data_check.mjs fails if the two ever disagree.",
   "star": {
     "atk": [
       1,
@@ -10,14 +10,399 @@
       1,
       1.8,
       3.24
-    ]
+    ],
+    "copies_to_merge": 3,
+    "source": "prototype",
+    "note": "3.24 x HP x 3.24 x damage = about 10.5x a 1-star: the design's '3-star is 10x'."
   },
   "raid": {
     "seconds": 15,
-    "scout": 2
+    "scout": 2,
+    "source": "design",
+    "brands_per_raid": 3,
+    "extra_brand_from_sacrifice": 1,
+    "brands_bank": false,
+    "lure_choices": 3,
+    "lure_max_share_of_pen": 0.5,
+    "full_heal_before_ghost_fight": true,
+    "pen_size_by_round": {
+      "rule": "min(8, 6 + (round > 2) + (round > 4))",
+      "table": [
+        6,
+        6,
+        7,
+        7,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "source": "prototype"
+    },
+    "pen_min_top_tier_units": {
+      "value": 1,
+      "source": "prototype",
+      "note": "Each pen has at least one tier 3 or higher."
+    },
+    "wild_stat_scale": {
+      "hp": {
+        "base": 0.55,
+        "per_round": 0.08
+      },
+      "atk": {
+        "base": 0.6,
+        "per_round": 0.06
+      },
+      "source": "prototype",
+      "note": "Wild fighters start weaker than yours and catch up each round: scale = base + per_round x (round - 1)."
+    },
+    "runners": {
+      "min_tier": 3,
+      "hp_mult": 0.9,
+      "flee_after_s": [
+        4.5,
+        6.5
+      ],
+      "source": "prototype",
+      "proposed_fields": [
+        "min_tier"
+      ],
+      "note": "PROPOSED that tier 4 and 5 fighters run too."
+    }
   },
   "slots": {
     "bench": 8,
     "board": 8
+  },
+  "schema": 1,
+  "run": {
+    "source": "design",
+    "start_hp": 500,
+    "loss_damage_per_enemy_unit": 10,
+    "loss_damage_enemy_commander": 13,
+    "win_target": 12,
+    "boss_every_n_battles": 3,
+    "board_includes_commander": true,
+    "arena": {
+      "cols": 8,
+      "rows": 12,
+      "source": "prototype"
+    },
+    "ghost_fight_target_s": 30
+  },
+  "pen_tier_odds": {
+    "_about": "Chance per pen slot of each tier, rounds 1-13. Rows sum to 1. Rounds 1-6 follow the prototype formula; tier 4 and 5 columns are the design doc's proposed table; from round 7 tiers 1-3 shrink in proportion to make room (PROPOSED). Boss rounds (3, 6, 9, 12, 13) have no Raid; their rows are kept for completeness.",
+    "columns": [
+      "tier1",
+      "tier2",
+      "tier3",
+      "tier4",
+      "tier5"
+    ],
+    "status": "tier 4/5 columns: awaiting confirmation (design open question)",
+    "by_round": {
+      "1": [
+        0.6,
+        0.3,
+        0.1,
+        0,
+        0
+      ],
+      "2": [
+        0.51,
+        0.35,
+        0.14,
+        0,
+        0
+      ],
+      "3": [
+        0.42,
+        0.4,
+        0.18,
+        0,
+        0
+      ],
+      "4": [
+        0.33,
+        0.45,
+        0.22,
+        0,
+        0
+      ],
+      "5": [
+        0.29,
+        0.45,
+        0.26,
+        0,
+        0
+      ],
+      "6": [
+        0.25,
+        0.45,
+        0.3,
+        0,
+        0
+      ],
+      "7": [
+        0.2375,
+        0.4275,
+        0.285,
+        0.04,
+        0.01
+      ],
+      "8": [
+        0.23,
+        0.414,
+        0.276,
+        0.06,
+        0.02
+      ],
+      "9": [
+        0.2225,
+        0.4005,
+        0.267,
+        0.08,
+        0.03
+      ],
+      "10": [
+        0.215,
+        0.387,
+        0.258,
+        0.1,
+        0.04
+      ],
+      "11": [
+        0.2075,
+        0.3735,
+        0.249,
+        0.12,
+        0.05
+      ],
+      "12": [
+        0.2,
+        0.36,
+        0.24,
+        0.14,
+        0.06
+      ],
+      "13": [
+        0.2,
+        0.36,
+        0.24,
+        0.14,
+        0.06
+      ]
+    }
+  },
+  "copies_per_run": {
+    "_about": "How many copies of each fighter exist in one run's pens. Ghost-spoil copies come from outside this pool.",
+    "source": "design (proposed figures)",
+    "by_tier": {
+      "1": 12,
+      "2": 9,
+      "3": 6,
+      "4": 4,
+      "5": 2
+    }
+  },
+  "combat": {
+    "source": "prototype",
+    "armor_formula": "damage x 100 / (100 + armor)",
+    "mr_formula": "damage x 100 / (100 + mr)",
+    "true_damage_ignores_resists": true,
+    "default_armor": 25,
+    "default_mr": 25,
+    "base_crit": 0.25,
+    "base_crit_damage": 1.4,
+    "attack_roll": [
+      0.95,
+      1.05
+    ],
+    "counter_wheel_bonus": 0.15,
+    "min_damage": 1
+  },
+  "patch": {
+    "_about": "The only block the balance job writes. 1.0 = no change. Fields: hp, atk, as (attack speed), ability_power, heal_power, cc_seconds_add (seconds added to that class's own stuns and roots).",
+    "version": "0.1.0",
+    "date": "2026-11-06",
+    "class_mods": {
+      "warrior": {
+        "hp": 1,
+        "atk": 1,
+        "as": 1,
+        "ability_power": 1,
+        "heal_power": 1,
+        "cc_seconds_add": 0
+      },
+      "healer": {
+        "hp": 1,
+        "atk": 1,
+        "as": 1,
+        "ability_power": 1,
+        "heal_power": 1,
+        "cc_seconds_add": 0
+      },
+      "mage": {
+        "hp": 1,
+        "atk": 1,
+        "as": 1,
+        "ability_power": 1,
+        "heal_power": 1,
+        "cc_seconds_add": 0
+      },
+      "judge_mark": {
+        "hp": 1,
+        "atk": 1,
+        "as": 1,
+        "ability_power": 1,
+        "heal_power": 1,
+        "cc_seconds_add": 0
+      },
+      "ember_keeper": {
+        "hp": 1,
+        "atk": 1,
+        "as": 1,
+        "ability_power": 1,
+        "heal_power": 1,
+        "cc_seconds_add": 0
+      },
+      "gusting_shallow": {
+        "hp": 1,
+        "atk": 1,
+        "as": 1,
+        "ability_power": 1,
+        "heal_power": 1,
+        "cc_seconds_add": 0
+      },
+      "quiet_concern": {
+        "hp": 1,
+        "atk": 1,
+        "as": 1,
+        "ability_power": 1,
+        "heal_power": 1,
+        "cc_seconds_add": 0
+      },
+      "leaf_in_the_wind": {
+        "hp": 1,
+        "atk": 1,
+        "as": 1,
+        "ability_power": 1,
+        "heal_power": 1,
+        "cc_seconds_add": 0
+      }
+    },
+    "fighter_mods": {},
+    "boss_mods": {},
+    "history": []
+  },
+  "patch_job": {
+    "_about": "Rules the Online & Accounts balance job follows each patch (design, layer 5). Numbers marked PROPOSED fill gaps the design leaves.",
+    "source": "design",
+    "measure": "class share of 12-win runs: the fraction of 12-win final boards on which the class is at an active rank",
+    "compare_to": "average share across the 8 primary classes",
+    "threshold_points": 5,
+    "step_min": 0.03,
+    "step_max": 0.05,
+    "step_rule": {
+      "value": "3% at 5 points from average, rising linearly to 5% at 10 points or more",
+      "source": "PROPOSED"
+    },
+    "fields_changed": {
+      "value": [
+        "hp",
+        "atk"
+      ],
+      "source": "PROPOSED"
+    },
+    "direction": "above average: multiply by (1 - step); below average: multiply by (1 + step)",
+    "min_12_win_runs_in_sample": {
+      "value": 200,
+      "source": "PROPOSED"
+    },
+    "mod_floor": {
+      "value": 0.8,
+      "source": "PROPOSED"
+    },
+    "mod_ceiling": {
+      "value": 1.2,
+      "source": "PROPOSED"
+    },
+    "max_changes_per_class_per_patch": {
+      "value": 1,
+      "source": "PROPOSED"
+    },
+    "output": "update patch.class_mods, bump patch.version, append one history row per change {class, field, from, to, share, average}, and write short patch notes",
+    "secondary_attributes": {
+      "value": "not adjusted by the job (too few tier 5 samples); Role Building tunes them by hand",
+      "source": "PROPOSED"
+    }
+  },
+  "pit_conditions": {
+    "_about": "Weekly modifier (design, layer 6). Same fields as patch.class_mods, applied on top. Role Building writes the list; Engineering or the live job sets 'active'.",
+    "source": "design",
+    "active": null,
+    "rotation": "weekly",
+    "list": {
+      "gale_season": {
+        "name": "Gale Season",
+        "text": "Gusting Shallow stuns 0.5 s shorter; Healers heal 10% more.",
+        "class_mods": {
+          "gusting_shallow": {
+            "cc_seconds_add": -0.5
+          },
+          "healer": {
+            "heal_power": 1.1
+          }
+        },
+        "source": "design"
+      },
+      "ember_tide": {
+        "name": "Ember Tide",
+        "text": "Ember Keepers deal 10% more ability damage; Judge Marks have 10% less HP.",
+        "class_mods": {
+          "ember_keeper": {
+            "ability_power": 1.1
+          },
+          "judge_mark": {
+            "hp": 0.9
+          }
+        },
+        "source": "PROPOSED"
+      },
+      "still_air": {
+        "name": "Still Air",
+        "text": "Leaf in the Wind roots last 0.5 s longer; Quiet Concerns attack 10% slower.",
+        "class_mods": {
+          "leaf_in_the_wind": {
+            "cc_seconds_add": 0.5
+          },
+          "quiet_concern": {
+            "as": 0.9
+          }
+        },
+        "source": "PROPOSED"
+      },
+      "iron_week": {
+        "name": "Iron Week",
+        "text": "Warriors and Judge Marks gain 8% HP; Mages deal 8% less ability damage.",
+        "class_mods": {
+          "warrior": {
+            "hp": 1.08
+          },
+          "judge_mark": {
+            "hp": 1.08
+          },
+          "mage": {
+            "ability_power": 0.92
+          }
+        },
+        "source": "PROPOSED"
+      }
+    }
   }
 }

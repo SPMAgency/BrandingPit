@@ -1,5 +1,5 @@
 {
-  "_note": "Owner: Role Building. One ability per class: mana cost, name, text. Effects run in src/sim/combat.js.",
+  "_note": "Owner: Role Building. One ability per class, cast when the mana bar is full. Owner: Role Building. Multipliers are of the caster's attack damage and are scaled by ability power (items). Timing of the cast lives in move_timing.json (Animations), not here. Top-level class-name keys are what the game reads today (mana, n = name, d = text). The keys the game reads today through src/data/load.js (Engineering) are kept exactly as they were. Everything else is Role Building's full structure; tests/role-building/data_check.mjs fails if the two ever disagree.",
   "Warrior": {
     "mana": 60,
     "n": "Cleave",
@@ -39,5 +39,140 @@
     "mana": 60,
     "n": "Leaf Step",
     "d": "Steps behind the target, roots it for 1.5 s and strikes for 150%."
+  },
+  "schema": 1,
+  "mana_rules": {
+    "source": "prototype",
+    "per_attack": 10,
+    "per_hit_taken_fraction_of_damage": 0.05,
+    "per_hit_taken_cap": 10,
+    "reset_on_cast": true
+  },
+  "by_class": {
+    "warrior": {
+      "id": "cleave",
+      "name": "Cleave",
+      "mana": 60,
+      "source": "prototype",
+      "text": "Strikes the target and enemies beside it for 180% attack damage.",
+      "effect": {
+        "type": "damage",
+        "damage_type": "physical",
+        "atk_mult": 1.8,
+        "area": "target_and_adjacent",
+        "can_crit": true
+      }
+    },
+    "healer": {
+      "id": "mend",
+      "name": "Mend",
+      "mana": 70,
+      "source": "prototype",
+      "text": "Heals the most hurt ally for 250% attack damage + 80.",
+      "effect": {
+        "type": "heal",
+        "target": "lowest_hp_fraction_ally",
+        "atk_mult": 2.5,
+        "flat": 80
+      }
+    },
+    "mage": {
+      "id": "arcane_bolt",
+      "name": "Arcane Bolt",
+      "mana": 60,
+      "source": "prototype",
+      "text": "Hurls a bolt for 320% attack damage as magic.",
+      "effect": {
+        "type": "damage",
+        "damage_type": "magic",
+        "atk_mult": 3.2,
+        "projectile": true
+      }
+    },
+    "judge_mark": {
+      "id": "bastion",
+      "name": "Bastion",
+      "mana": 80,
+      "source": "prototype",
+      "text": "Gains a shield worth 30% max HP for 4 s.",
+      "effect": {
+        "type": "shield",
+        "target": "self",
+        "max_hp_mult": 0.3,
+        "seconds": 4
+      }
+    },
+    "ember_keeper": {
+      "id": "ember_burst",
+      "name": "Ember Burst",
+      "mana": 60,
+      "source": "prototype",
+      "text": "150% attack damage as magic, then burns 3% max HP per second for 3 s.",
+      "effect": {
+        "type": "damage",
+        "damage_type": "magic",
+        "atk_mult": 1.5,
+        "projectile": true,
+        "then": {
+          "type": "burn",
+          "max_hp_per_s": 0.03,
+          "seconds": 3
+        }
+      }
+    },
+    "gusting_shallow": {
+      "id": "updraft",
+      "name": "Updraft",
+      "mana": 70,
+      "source": "prototype",
+      "text": "Knocks the target up, stunning it for 1.5 s, and deals 120% attack damage.",
+      "effect": {
+        "type": "damage",
+        "damage_type": "physical",
+        "atk_mult": 1.2,
+        "then": {
+          "type": "stun",
+          "seconds": 1.5,
+          "knockup": true
+        }
+      }
+    },
+    "quiet_concern": {
+      "id": "shadow_strike",
+      "name": "Shadow Strike",
+      "mana": 50,
+      "source": "prototype",
+      "text": "A guaranteed critical strike for 200% attack damage.",
+      "effect": {
+        "type": "damage",
+        "damage_type": "physical",
+        "atk_mult": 2,
+        "force_crit": true
+      }
+    },
+    "leaf_in_the_wind": {
+      "id": "leaf_step",
+      "name": "Leaf Step",
+      "mana": 60,
+      "source": "prototype",
+      "text": "Steps behind the target, roots it for 1.5 s and strikes for 150%.",
+      "effect": {
+        "type": "damage",
+        "damage_type": "physical",
+        "atk_mult": 1.5,
+        "can_crit": true,
+        "before": {
+          "type": "blink_behind"
+        },
+        "then": {
+          "type": "root",
+          "seconds": 1.5
+        }
+      }
+    }
+  },
+  "signature": {
+    "_about": "PROPOSED and empty for launch: tier 5 fighters use their class ability. The animation plan allows a tier 5 its own cast clip later; a signature here would override by_class for that fighter id.",
+    "source": "PROPOSED"
   }
 }

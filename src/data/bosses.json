@@ -1,0 +1,402 @@
+{
+  "_about": "Boss pool. Owner: Role Building. Every third battle a boss replaces the Raid; it fights your whole board alone. Afterwards every unit is fully healed and the round's ghost fight follows as normal (that fight counts toward 12 wins). Rules and loot boosts are from the design doc; every boss and number is PROPOSED, first-guess HP aimed at a 20-30 s fight, to be tuned in the fight sim. Bosses are two-legged on the shared rig, drawn larger, with their own clip set (animation plan). Boss looks follow the base line plus a boss line Character Dev writes with the first boss: bigger build, larger cell, one class signal exaggerated, no wings.",
+  "schema": 1,
+  "status": "DRAFT",
+  "rules": {
+    "levels": [
+      3,
+      6,
+      9,
+      12,
+      13
+    ],
+    "level_13_requires": "perfect_12_0_run",
+    "replaces_raid": true,
+    "full_heal_after": true,
+    "pool_pick": "random_from_level_pool",
+    "source": "design",
+    "on_win": {
+      "relic_offer": true,
+      "apparel_piece": 1,
+      "commander_attribute_switch": true,
+      "bonus_stat_for_chosen_attribute": {
+        "choices": {
+          "hp": 0.06,
+          "atk": 0.06,
+          "as": 0.06
+        },
+        "applies_to": "units_of_the_commander_attribute_class",
+        "stacks": true,
+        "source": "PROPOSED"
+      }
+    },
+    "on_loss": {
+      "lose_fraction_of_current_hp": 0.5,
+      "loot": false,
+      "bench_wiped": true,
+      "source": "design"
+    },
+    "abilities_use": "cooldown_seconds",
+    "cc_duration_mult_on_boss": 0.5,
+    "enrage": {
+      "after_s": 45,
+      "damage_mult": 1.5
+    },
+    "proposed_fields": [
+      "abilities_use",
+      "cc_duration_mult_on_boss",
+      "enrage",
+      "on_win.bonus_stat_for_chosen_attribute"
+    ],
+    "note": "Bosses take half-length stuns and roots (not immunity, so the design's 'no immunity window' still holds), otherwise a Gusting Shallow board could lock a boss forever. Enrage stops a stalled fight running on."
+  },
+  "loot_boost_by_level": {
+    "source": "design",
+    "3": {
+      "rare": 0.75
+    },
+    "6": {
+      "epic": 0.75
+    },
+    "9": {
+      "legendary": 0.25
+    },
+    "12": {
+      "epic": 0.75,
+      "legendary": 0.75
+    },
+    "13": {
+      "special": {
+        "chance": 0.75,
+        "drops": [
+          "legendary_relic",
+          "legendary_magic_attack"
+        ]
+      }
+    }
+  },
+  "pool": {
+    "3": [
+      {
+        "id": "gravelgut",
+        "name": "Gravelgut the Gatekeeper",
+        "hp": 4500,
+        "atk": 90,
+        "as": 0.6,
+        "range": 1,
+        "armor": 60,
+        "mr": 30,
+        "concept": "A broad doorkeeper of the Pit built of mortared stone blocks, a heavy gate-bar prop over one shoulder.",
+        "ability": {
+          "name": "Slab Slam",
+          "cooldown_s": 6,
+          "effect": {
+            "type": "damage",
+            "target": "enemies_within",
+            "radius": 2,
+            "atk_mult": 1.5,
+            "damage_type": "physical",
+            "then": {
+              "type": "stun",
+              "seconds": 1.0
+            }
+          }
+        },
+        "passive": {
+          "name": "Mortar Hide",
+          "effect": {
+            "type": "stat",
+            "armor_add": 40
+          }
+        }
+      },
+      {
+        "id": "thornmother",
+        "name": "The Thornmother",
+        "hp": 4200,
+        "atk": 80,
+        "as": 0.7,
+        "range": 2,
+        "armor": 35,
+        "mr": 45,
+        "concept": "A hedge-witch in a stiff bark mantle, vines coiled close around her arms.",
+        "ability": {
+          "name": "Thorn Lash",
+          "cooldown_s": 5,
+          "effect": {
+            "type": "damage",
+            "target": "line",
+            "length": 3,
+            "atk_mult": 1.4,
+            "damage_type": "physical",
+            "then": {
+              "type": "root",
+              "seconds": 1.5
+            }
+          }
+        },
+        "passive": {
+          "name": "Regrowth",
+          "effect": {
+            "type": "regen",
+            "max_hp_per_s": 0.02,
+            "when_not_hit_for_s": 2.0
+          }
+        }
+      }
+    ],
+    "6": [
+      {
+        "id": "cinderjaw",
+        "name": "Cinderjaw Warden",
+        "hp": 10500,
+        "atk": 120,
+        "as": 0.7,
+        "range": 2,
+        "armor": 50,
+        "mr": 50,
+        "concept": "A forge-guard with a furnace-grate visor and a short lizard tail that sheds sparks.",
+        "ability": {
+          "name": "Furnace Breath",
+          "cooldown_s": 7,
+          "effect": {
+            "type": "damage",
+            "target": "cone",
+            "length": 3,
+            "atk_mult": 1.6,
+            "damage_type": "magic",
+            "then": {
+              "type": "burn",
+              "max_hp_per_s": 0.03,
+              "seconds": 3.0
+            }
+          }
+        },
+        "passive": {
+          "name": "Stoked",
+          "effect": {
+            "type": "below_hp_buff",
+            "hp_fraction": 0.5,
+            "as": 0.3
+          }
+        }
+      },
+      {
+        "id": "bellringer",
+        "name": "The Hollow Bellringer",
+        "hp": 10000,
+        "atk": 110,
+        "as": 0.65,
+        "range": 3,
+        "armor": 40,
+        "mr": 60,
+        "concept": "A hooded, smooth-masked tower keeper who swings a great bronze bell prop like a hammer.",
+        "ability": {
+          "name": "Toll",
+          "cooldown_s": 6,
+          "effect": {
+            "type": "damage",
+            "target": "all_enemies",
+            "atk_mult": 0.8,
+            "damage_type": "magic",
+            "then": {
+              "type": "mana_lock",
+              "seconds": 2.0
+            }
+          }
+        },
+        "passive": {
+          "name": "Third Toll",
+          "effect": {
+            "type": "every_nth_cast",
+            "n": 3,
+            "then": {
+              "type": "stun",
+              "target": "all_enemies",
+              "seconds": 1.0
+            }
+          }
+        }
+      }
+    ],
+    "9": [
+      {
+        "id": "stormhide",
+        "name": "Stormhide Matriarch",
+        "hp": 22000,
+        "atk": 160,
+        "as": 0.75,
+        "range": 1,
+        "armor": 60,
+        "mr": 40,
+        "concept": "A ram-horned chieftain in a stiff storm mantle, lightning crackling along her horns.",
+        "ability": {
+          "name": "Cyclone",
+          "cooldown_s": 8,
+          "effect": {
+            "type": "pull",
+            "target": "enemies_within",
+            "radius": 2,
+            "atk_mult": 1.8,
+            "damage_type": "physical",
+            "then": {
+              "type": "stun",
+              "seconds": 1.5,
+              "knockup": true
+            }
+          }
+        },
+        "passive": {
+          "name": "Eye of the Storm",
+          "effect": {
+            "type": "damage_taken_mult",
+            "from_range_1": 0.85
+          }
+        }
+      },
+      {
+        "id": "mirrormagistrate",
+        "name": "The Mirror Magistrate",
+        "hp": 21000,
+        "atk": 150,
+        "as": 0.7,
+        "range": 3,
+        "armor": 40,
+        "mr": 70,
+        "concept": "A judge in silvered plate with a full-length mirror shield prop that throws blows back.",
+        "ability": {
+          "name": "Judgment Beam",
+          "cooldown_s": 6,
+          "effect": {
+            "type": "damage",
+            "target": "highest_attack_enemy",
+            "atk_mult": 3.0,
+            "damage_type": "magic"
+          }
+        },
+        "passive": {
+          "name": "Reflection",
+          "effect": {
+            "type": "reflect",
+            "fraction": 0.15,
+            "damage_type": "magic"
+          }
+        }
+      }
+    ],
+    "12": [
+      {
+        "id": "ironvein",
+        "name": "Ironvein Colossus",
+        "hp": 37000,
+        "atk": 220,
+        "as": 0.6,
+        "range": 1,
+        "armor": 70,
+        "mr": 50,
+        "concept": "A giant of riveted iron with glowing ore seams who cracks the arena floor with each step.",
+        "ability": {
+          "name": "Earthsplitter",
+          "cooldown_s": 9,
+          "effect": {
+            "type": "damage",
+            "target": "line",
+            "length": 12,
+            "atk_mult": 2.5,
+            "damage_type": "physical",
+            "then": {
+              "type": "stun",
+              "seconds": 1.5
+            }
+          }
+        },
+        "passive": {
+          "name": "Hardening",
+          "effect": {
+            "type": "stat_over_time",
+            "armor_add": 5,
+            "every_s": 3
+          }
+        }
+      },
+      {
+        "id": "duskwing",
+        "name": "Duskwing Sovereign",
+        "hp": 34000,
+        "atk": 200,
+        "as": 0.8,
+        "range": 2,
+        "armor": 45,
+        "mr": 55,
+        "concept": "A moth-antennaed night queen in a stiff shadow-violet mantle that dims the torches of the Pit.",
+        "ability": {
+          "name": "Eclipse",
+          "cooldown_s": 8,
+          "effect": {
+            "type": "damage",
+            "target": "all_enemies",
+            "atk_mult": 1.5,
+            "damage_type": "magic",
+            "then": {
+              "type": "blind",
+              "seconds": 2.0
+            }
+          }
+        },
+        "passive": {
+          "name": "Moonstep",
+          "effect": {
+            "type": "at_hp_fractions",
+            "fractions": [
+              0.66,
+              0.33
+            ],
+            "then": {
+              "type": "untargetable_and_blink",
+              "seconds": 2.0,
+              "to": "enemy_back_row"
+            }
+          }
+        }
+      }
+    ],
+    "13": [
+      {
+        "id": "firstbrand",
+        "name": "The First Brand",
+        "hp": 52000,
+        "atk": 260,
+        "as": 0.8,
+        "range": 2,
+        "armor": 60,
+        "mr": 60,
+        "concept": "The ancient commander who carved the first sigil, armored in light, a crown of floating brands circling its head.",
+        "ability": {
+          "name": "Sigil Rain",
+          "cooldown_s": 7,
+          "effect": {
+            "type": "damage",
+            "target": "random_enemies",
+            "count": 6,
+            "atk_mult": 2.0,
+            "damage_type": "magic"
+          }
+        },
+        "passive": {
+          "name": "Brand of Ruin",
+          "effect": {
+            "type": "phase",
+            "at_hp_fraction": 0.5,
+            "as": 0.3,
+            "then_every_s": 15,
+            "then": {
+              "type": "stun",
+              "target": "all_enemies",
+              "seconds": 1.5
+            }
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "_note": "Owner: Role Building. colors = class colour; traits.r = rank thresholds, traits.d = text; counter = +bonus damage from a class to the one it beats.",
+  "_note": "Owner: Role Building. Classes and secondary attributes. Owner: Role Building. Read by Actions/Functions. 'source' says where each number came from: design = design doc, prototype = prototype/raid.html, PROPOSED = invented here and waiting for Doctor Def's OK. Fields listed in 'proposed_fields' are PROPOSED even when the entry's source is design. The keys the game reads today through src/data/load.js (Engineering) are kept exactly as they were. Everything else is Role Building's full structure; tests/role-building/data_check.mjs fails if the two ever disagree.",
   "colors": {
     "Warrior": "#e0704f",
     "Healer": "#5fcf8e",
@@ -84,5 +84,363 @@
       "Gusting Shallow": "Warrior"
     },
     "bonus": 0.15
+  },
+  "schema": 1,
+  "rank_count_rule": {
+    "value": "units_on_board",
+    "detail": "A rank is how many units of that class are on the board together. Every unit counts, including two unmerged copies of the same fighter, as in the prototype. The commander counts toward the class it has taken as its attribute.",
+    "source": "prototype"
+  },
+  "default_stun_seconds": {
+    "value": 2,
+    "source": "design"
+  },
+  "stun_immunity_window_seconds": {
+    "value": 0,
+    "source": "design"
+  },
+  "primary": {
+    "warrior": {
+      "name": "Warrior",
+      "source": "design",
+      "summary": "Each hit adds +50% damage to the enemy it lands on. The stack lives on the enemy, so a marked enemy keeps it when the Warrior switches targets.",
+      "effect": {
+        "type": "enemy_damage_stack",
+        "stack_per_hit": 0.5
+      },
+      "ranks": [
+        {
+          "at": 3,
+          "stack_cap": 1
+        },
+        {
+          "at": 5,
+          "stack_cap": 2
+        },
+        {
+          "at": 8,
+          "stack_cap": 3.5
+        }
+      ]
+    },
+    "healer": {
+      "name": "Healer",
+      "source": "design",
+      "summary": "Revive one knocked-out unit on the field, at will: the player taps it mid-fight. Ghost Healers revive the commander first when able, otherwise the unit that has dealt the most damage.",
+      "effect": {
+        "type": "revive",
+        "revives_per_fight": 1,
+        "player_picks_target": true,
+        "ghost_pick": [
+          "commander_if_allowed",
+          "top_damage_dealer"
+        ]
+      },
+      "ranks": [
+        {
+          "at": 3,
+          "unit_revive_hp": 0.5,
+          "commander_revive_hp": null
+        },
+        {
+          "at": 5,
+          "unit_revive_hp": 1,
+          "commander_revive_hp": null
+        },
+        {
+          "at": 7,
+          "unit_revive_hp": 1,
+          "commander_revive_hp": 0.5
+        },
+        {
+          "at": 8,
+          "unit_revive_hp": 1,
+          "commander_revive_hp": 1
+        }
+      ],
+      "proposed_fields": [
+        "ranks[2].unit_revive_hp",
+        "ranks[3].unit_revive_hp"
+      ],
+      "note": "Design names only the commander revive at ranks 7 and 8; PROPOSED that the rank 5 unit revive (100%) carries up."
+    },
+    "mage": {
+      "name": "Mage",
+      "source": "design",
+      "summary": "Boosts relic powers.",
+      "effect": {
+        "type": "relic_boost"
+      },
+      "ranks": [
+        {
+          "at": 3,
+          "relic_duration_add_s": 3,
+          "relic_power_mult": 1,
+          "relic_duration_mult": 1
+        },
+        {
+          "at": 5,
+          "relic_duration_add_s": 0,
+          "relic_power_mult": 2,
+          "relic_duration_mult": 2
+        }
+      ],
+      "note": "Rank 5 doubles the relic's base duration and does not also add the 3.0 s (PROPOSED reading)."
+    },
+    "judge_mark": {
+      "name": "Judge Mark",
+      "source": "design",
+      "summary": "Armor boost and a chance to slow on hit.",
+      "effect": {
+        "type": "armor_and_slow",
+        "slow_seconds": 2,
+        "slow_attack_speed_mult": 0.7
+      },
+      "ranks": [
+        {
+          "at": 2,
+          "armor_bonus": 0.2,
+          "slow_chance": 0.05
+        },
+        {
+          "at": 4,
+          "armor_bonus": 0.25,
+          "slow_chance": 0.18
+        },
+        {
+          "at": 5,
+          "armor_bonus": 0.4,
+          "slow_chance": 0.35
+        }
+      ],
+      "proposed_fields": [],
+      "note": "Slow length and strength (2.0 s, attack speed x0.7) are from the prototype."
+    },
+    "ember_keeper": {
+      "name": "Ember Keeper",
+      "source": "design",
+      "summary": "Flame sprites burn 3% of the carrier's max HP per second; up to 5 sprites per enemy.",
+      "effect": {
+        "type": "flame_sprite",
+        "burn_max_hp_per_s": 0.03,
+        "tick_s": 1,
+        "sprite_seconds": 3,
+        "max_sprites_per_enemy": 5
+      },
+      "ranks": [
+        {
+          "at": 4,
+          "sprite_every_nth_attack": 5,
+          "bonus_hit_max_hp": 0
+        },
+        {
+          "at": 5,
+          "sprite_every_nth_attack": 5,
+          "bonus_hit_max_hp": 0.03
+        }
+      ],
+      "proposed_fields": [],
+      "note": "Sprite length 3.0 s is from the prototype."
+    },
+    "gusting_shallow": {
+      "name": "Gusting Shallow",
+      "source": "design",
+      "summary": "Every third attack knocks up and stuns.",
+      "effect": {
+        "type": "knockup_every_nth",
+        "every_nth_attack": 3
+      },
+      "ranks": [
+        {
+          "at": 4,
+          "stun_s": 1.5
+        },
+        {
+          "at": 5,
+          "stun_s": 3
+        }
+      ]
+    },
+    "quiet_concern": {
+      "name": "Quiet Concern",
+      "source": "design",
+      "summary": "Crit rate and crit damage.",
+      "effect": {
+        "type": "crit_bonus"
+      },
+      "ranks": [
+        {
+          "at": 1,
+          "crit_rate_add": 0.05,
+          "crit_damage_add": 0.05
+        },
+        {
+          "at": 5,
+          "crit_rate_add": 0.3,
+          "crit_damage_add": 1
+        }
+      ]
+    },
+    "leaf_in_the_wind": {
+      "name": "Leaf in the Wind",
+      "source": "design",
+      "summary": "Chance on hit to root the enemy (no moving or turning) and step behind it.",
+      "effect": {
+        "type": "root_and_blink",
+        "root_s": 1.5
+      },
+      "ranks": [
+        {
+          "at": 4,
+          "root_chance": 0.2,
+          "attack_speed_bonus": 0
+        },
+        {
+          "at": 5,
+          "root_chance": 0.2,
+          "attack_speed_bonus": 0.3
+        }
+      ]
+    }
+  },
+  "secondary": {
+    "_about": "Granted only to tier 5 fighters, on top of their primary class. Outside the counter wheel: a tier 5 counters and is countered through its primary class.",
+    "wisest_battler": {
+      "name": "Wisest Battler",
+      "source": "design",
+      "summary": "Armor penetration. Every third hit decays the target's armor by 15% / 25% / 35% for a 1 / 2 / 3-star fighter.",
+      "effect": {
+        "type": "armor_decay",
+        "every_nth_hit": 3,
+        "decay_by_star": [
+          0.15,
+          0.25,
+          0.35
+        ]
+      },
+      "ranks": [
+        {
+          "at": 3,
+          "armor_pen_by_star": [
+            0.15,
+            0.25,
+            0.35
+          ]
+        }
+      ],
+      "proposed_ranks": [
+        {
+          "at": 1,
+          "armor_pen_by_star": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "at": 2,
+          "armor_pen_by_star": [
+            0.15,
+            0.25,
+            0.35
+          ]
+        }
+      ]
+    },
+    "recovery_pool": {
+      "name": "Recovery Pool",
+      "source": "design",
+      "summary": "Life steal from enemies, up to a cap.",
+      "effect": {
+        "type": "life_steal",
+        "cap_max_hp_per_fight": 0.5
+      },
+      "ranks": [
+        {
+          "at": 4,
+          "life_steal": 0.2,
+          "every_nth": 5,
+          "counts": "hits"
+        },
+        {
+          "at": 5,
+          "life_steal": 0.3,
+          "every_nth": 4,
+          "counts": "attacks"
+        }
+      ],
+      "proposed_ranks": [
+        {
+          "at": 1,
+          "life_steal": 0.2,
+          "every_nth": 5,
+          "counts": "hits"
+        },
+        {
+          "at": 2,
+          "life_steal": 0.3,
+          "every_nth": 4,
+          "counts": "attacks"
+        }
+      ],
+      "proposed_fields": [
+        "effect.cap_max_hp_per_fight"
+      ],
+      "note": "The design says 'up to a cap' without a number. PROPOSED: healing from life steal stops at 50% of the fighter's max HP per fight."
+    },
+    "magnetic_composition": {
+      "name": "Magnetic Composition",
+      "source": "design",
+      "summary": "Chance to stun on hit (2.0 s).",
+      "effect": {
+        "type": "stun_on_hit",
+        "stun_s": 2
+      },
+      "ranks": [
+        {
+          "at": 1,
+          "stun_chance": 0.1
+        },
+        {
+          "at": 3,
+          "stun_chance": 0.15
+        },
+        {
+          "at": 4,
+          "stun_chance": 0.3
+        }
+      ],
+      "proposed_ranks": [
+        {
+          "at": 1,
+          "stun_chance": 0.1
+        },
+        {
+          "at": 2,
+          "stun_chance": 0.15
+        },
+        {
+          "at": 3,
+          "stun_chance": 0.3
+        }
+      ]
+    },
+    "_decision_pending": "DECISION 1 for Doctor Def: with one tier 5 fighter per attribute, 2 copies per run and tier 5s appearing about once per run, the design ranks above 2 can never switch on (Recovery Pool never activates at all). 'proposed_ranks' re-cuts them to 1 / 2 / 3. The fight code should read 'ranks' until this is approved, then 'proposed_ranks' replaces 'ranks'."
+  },
+  "counter_wheel": {
+    "_about": "Each class deals more damage to the class after it and takes more from the class before it. The last one beats the first.",
+    "source": "design",
+    "order": [
+      "warrior",
+      "mage",
+      "judge_mark",
+      "quiet_concern",
+      "healer",
+      "ember_keeper",
+      "leaf_in_the_wind",
+      "gusting_shallow"
+    ],
+    "bonus_damage": 0.15,
+    "secondary_attributes_on_wheel": false
   }
 }
