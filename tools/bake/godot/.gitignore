@@ -1,0 +1,5 @@
+# Owner: Animations. Per-run copies and Godot caches, never committed.
+layout.json
+.godot/
+out*/
+*.log
