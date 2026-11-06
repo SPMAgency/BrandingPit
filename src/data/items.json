@@ -1,5 +1,5 @@
 {
-  "_note": "Owner: Role Building. Two components combine into an item; stats are additive.",
+  "_note": "Owner: Role Building. Item components drop from defeated pen fighters; two components combine into a full item, Teamfight Tactics style. Owner: Role Building. Stats: hp/armor/mr are flat; atk/as/ap are fractions added to the base (0.25 = +25%); mana is starting mana. The keys the game reads today through src/data/load.js (Engineering) are kept exactly as they were. Everything else is Role Building's full structure; tests/role-building/data_check.mjs fails if the two ever disagree.",
   "components": [
     "Iron Shard",
     "Ember Thread",
@@ -75,6 +75,164 @@
       "as": 0.45,
       "c": "#a6e3f0",
       "d": "+45% attack speed"
+    }
+  },
+  "schema": 1,
+  "rules": {
+    "source": "prototype",
+    "drop_chance_per_pen_fighter": 0.35,
+    "component_pick": "uniform",
+    "combine": "automatic_pairs_after_raid",
+    "max_items_per_fighter": 3,
+    "commander_can_equip": false,
+    "on_release": "items_return_to_tray",
+    "on_merge": "items_carry_to_merged_fighter_up_to_max"
+  },
+  "component_defs": {
+    "iron_shard": {
+      "name": "Iron Shard",
+      "source": "prototype"
+    },
+    "ember_thread": {
+      "name": "Ember Thread",
+      "source": "prototype"
+    },
+    "moon_bead": {
+      "name": "Moon Bead",
+      "source": "prototype"
+    },
+    "gale_feather": {
+      "name": "Gale Feather",
+      "source": "prototype"
+    }
+  },
+  "combined": {
+    "bulwark_plate": {
+      "name": "Bulwark Plate",
+      "parts": [
+        "iron_shard",
+        "iron_shard"
+      ],
+      "stats": {
+        "armor": 40,
+        "hp": 150
+      },
+      "text": "+40 armor, +150 HP",
+      "source": "prototype"
+    },
+    "forge_gauntlet": {
+      "name": "Forge Gauntlet",
+      "parts": [
+        "ember_thread",
+        "iron_shard"
+      ],
+      "stats": {
+        "atk": 0.25,
+        "armor": 15
+      },
+      "text": "+25% attack damage, +15 armor",
+      "source": "prototype"
+    },
+    "warden_charm": {
+      "name": "Warden Charm",
+      "parts": [
+        "iron_shard",
+        "moon_bead"
+      ],
+      "stats": {
+        "mr": 40,
+        "hp": 150
+      },
+      "text": "+40 magic resist, +150 HP",
+      "source": "prototype"
+    },
+    "swiftguard_boots": {
+      "name": "Swiftguard Boots",
+      "parts": [
+        "gale_feather",
+        "iron_shard"
+      ],
+      "stats": {
+        "as": 0.25,
+        "armor": 15
+      },
+      "text": "+25% attack speed, +15 armor",
+      "source": "prototype"
+    },
+    "cinder_crown": {
+      "name": "Cinder Crown",
+      "parts": [
+        "ember_thread",
+        "ember_thread"
+      ],
+      "stats": {
+        "atk": 0.4
+      },
+      "text": "+40% attack damage",
+      "source": "prototype"
+    },
+    "spellflare_tome": {
+      "name": "Spellflare Tome",
+      "parts": [
+        "ember_thread",
+        "moon_bead"
+      ],
+      "stats": {
+        "ap": 0.4,
+        "mana": 15
+      },
+      "text": "+40% ability power, start with 15 mana",
+      "source": "prototype"
+    },
+    "blaze_arrow": {
+      "name": "Blaze Arrow",
+      "parts": [
+        "ember_thread",
+        "gale_feather"
+      ],
+      "stats": {
+        "atk": 0.15,
+        "as": 0.2
+      },
+      "text": "+15% attack damage, +20% attack speed",
+      "source": "prototype"
+    },
+    "dream_lantern": {
+      "name": "Dream Lantern",
+      "parts": [
+        "moon_bead",
+        "moon_bead"
+      ],
+      "stats": {
+        "mana": 30
+      },
+      "text": "Start combat with 30 mana",
+      "source": "prototype"
+    },
+    "whisper_veil": {
+      "name": "Whisper Veil",
+      "parts": [
+        "gale_feather",
+        "moon_bead"
+      ],
+      "stats": {
+        "mr": 25,
+        "as": 0.15
+      },
+      "text": "+25 magic resist, +15% attack speed",
+      "source": "prototype"
+    },
+    "storm_fan": {
+      "name": "Storm Fan",
+      "parts": [
+        "gale_feather",
+        "gale_feather"
+      ],
+      "stats": {
+        "as": 0.45
+      },
+      "text": "+45% attack speed",
+      "source": "prototype"
     }
   }
 }

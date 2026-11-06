@@ -1,0 +1,49 @@
+{
+  "_about": "Relics and the damage meter. Owner: Role Building. Relics are offered only after boss wins and charge from the damage meter, never a random roll. The meter rules are from the design doc; every relic below is PROPOSED.",
+  "schema": 1,
+  "status": "DRAFT",
+  "meter": {
+    "source": "design",
+    "pool": "sum_of_max_hp_both_teams_at_fight_start",
+    "counts": "every_damage_number_from_both_teams",
+    "fills_at_fraction": [0.25, 0.5, 0.75],
+    "fills_per_fight_max": 3,
+    "on_fill": "every_held_relic_gains_one_charge",
+    "proposed_fields": ["counts", "on_fill"],
+    "note": "PROPOSED reading of 'each relic names its own trigger' with 'relics charge from a meter': a fill gives each relic one charge, and the relic spends it the next time its own trigger happens (an 'on_fill' relic spends it at once). Charges not spent by the end of the fight are lost. Damage counts as the number shown, overkill included, as in the prototype."
+  },
+  "offer": {
+    "source": "PROPOSED",
+    "choices_per_boss_win": 3,
+    "pick": 1,
+    "max_held": null,
+    "rarity_weights": { "common": 45, "uncommon": 30, "rare": 15, "epic": 8, "legendary": 2 },
+    "boost_rule": "A boss's loot boost multiplies that rarity's weight: '+75% Rare' means rare weight x 1.75.",
+    "note": "No cap on relics held: a run has at most 5 boss wins, so the cap never bites. Mage rank 3 adds 3.0 s to every relic with a duration; rank 5 doubles power and duration."
+  },
+  "triggers": {
+    "on_fill": "the moment the meter fills",
+    "on_attack": "the next basic attack by any ally after the charge",
+    "on_hit_taken": "the next time any ally is hit after the charge; applies to that ally",
+    "on_ally_ko": "the next time an ally is knocked out after the charge"
+  },
+  "relics": {
+    "whetstone_charm":   { "name": "Whetstone Charm",   "rarity": "common",    "trigger": "on_fill",      "effect": { "type": "buff", "target": "all_allies", "atk": 0.15, "seconds": 4.0 },                           "text": "All allies deal 15% more attack damage for 4 s." },
+    "tin_bell_ward":     { "name": "Tin Bell Ward",     "rarity": "common",    "trigger": "on_hit_taken", "effect": { "type": "shield", "target": "hit_ally", "max_hp_mult": 0.20, "seconds": 4.0 },                    "text": "The struck ally gains a shield worth 20% of its max HP for 4 s." },
+    "kindling_pouch":    { "name": "Kindling Pouch",    "rarity": "common",    "trigger": "on_attack",    "effect": { "type": "burn", "target": "attack_target", "max_hp_per_s": 0.03, "seconds": 3.0 },              "text": "That attack sets a flame sprite on its target: 3% max HP per second for 3 s." },
+    "rally_horn":        { "name": "Rally Horn",        "rarity": "uncommon",  "trigger": "on_ally_ko",   "effect": { "type": "buff", "target": "all_allies", "as": 0.25, "seconds": 5.0 },                            "text": "When an ally is knocked out, the rest gain 25% attack speed for 5 s." },
+    "moss_poultice":     { "name": "Moss Poultice",     "rarity": "uncommon",  "trigger": "on_fill",      "effect": { "type": "heal_over_time", "target": "all_allies", "max_hp_mult": 0.10, "seconds": 3.0 },         "text": "All allies heal 10% of their max HP over 3 s." },
+    "gust_chime":        { "name": "Gust Chime",        "rarity": "uncommon",  "trigger": "on_attack",    "effect": { "type": "stun", "target": "attack_target", "seconds": 1.0, "knockup": true },                    "text": "That attack knocks its target up, stunning it for 1.0 s." },
+    "mirror_pane":       { "name": "Mirror Pane",       "rarity": "rare",      "trigger": "on_hit_taken", "effect": { "type": "reflect", "target": "hit_ally", "fraction": 0.30, "damage_type": "magic", "seconds": 3.0 }, "text": "For 3 s the struck ally returns 30% of damage taken as magic damage." },
+    "sigil_lantern":     { "name": "Sigil Lantern",     "rarity": "rare",      "trigger": "on_fill",      "effect": { "type": "vulnerable", "target": "highest_hp_enemy", "damage_taken": 0.20, "seconds": 5.0 },      "text": "Marks the healthiest enemy with a glowing sigil: it takes 20% more damage for 5 s." },
+    "second_wind_plume": { "name": "Second Wind Plume", "rarity": "rare",      "trigger": "on_ally_ko",   "effect": { "type": "heal", "target": "nearest_ally_to_ko", "max_hp_mult": 0.30 },                          "text": "When an ally is knocked out, its nearest ally heals 30% of its max HP." },
+    "tempest_compass":   { "name": "Tempest Compass",   "rarity": "epic",      "trigger": "on_fill",      "effect": { "type": "debuff", "target": "all_enemies", "as_mult": 0.7, "seconds": 4.0 },                     "text": "All enemies are slowed (attack speed x0.7) for 4 s." },
+    "brandfire_censer":  { "name": "Brandfire Censer",  "rarity": "epic",      "trigger": "on_attack",    "effect": { "type": "chain", "targets": 3, "atk_mult": 1.0, "damage_type": "magic" },                      "text": "That attack leaps to 3 more enemies for 100% attack damage as magic." },
+    "heart_of_the_pit":  { "name": "Heart of the Pit",  "rarity": "legendary", "trigger": "on_fill",      "effect": { "type": "buff", "target": "all_allies", "shield_max_hp_mult": 0.30, "atk": 0.20, "seconds": 5.0 }, "text": "All allies gain a shield worth 30% of their max HP and 20% attack damage for 5 s." },
+    "starfall_locket":   { "name": "Starfall Locket",   "rarity": "legendary", "trigger": "on_fill",      "effect": { "type": "damage", "target": "all_enemies", "max_hp_mult": 0.08, "damage_type": "true" },        "text": "Stars fall on every enemy for 8% of its max HP as true damage." }
+  },
+  "rules_kept": [
+    "No relic revives: only the Healer class revives (design).",
+    "No 'at fight start' relic yet: under the meter rule it could only fire on the first fill. Say if you want fight-start relics to skip the meter."
+  ]
+}
