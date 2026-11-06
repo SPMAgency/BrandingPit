@@ -2,7 +2,7 @@
 const strip=o=>{const r={};for(const k in o)if(k[0]!=='_')r[k]=o[k];return r;};
 const CLASSES=DATA.classes.colors;
 const TRAITS=DATA.classes.traits;
-const ABIL=strip(DATA.abilities);
+const ABIL={};for(const k in CLASSES)if(DATA.abilities[k])ABIL[k]=DATA.abilities[k];
 const BEATS=DATA.classes.counter.beats;
 const BEATEN={};for(const k in BEATS)BEATEN[BEATS[k]]=k;
 const COUNTER=DATA.classes.counter.bonus;

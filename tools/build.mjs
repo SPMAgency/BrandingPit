@@ -16,7 +16,16 @@ for (const name of man.data) {
 }
 // JSON is valid JS; escape "</" so no string can close the script tag.
 const dataJs = 'const DATA=' + JSON.stringify(data).replace(/<\//g, '<\\/') + ';';
-const body = [dataJs, ...man.order.map(f => read(f.file).replace(/\n$/, ''))].join('\n');
+// A file marked "module": true is written as an ES module for its own tests; the
+// build drops its import lines and the export keyword, so it joins the shared scope.
+const asScript = src => src
+  .replace(/^\s*import\s[^;]*;?\s*$/gm, '')
+  .replace(/^(\s*)export\s+(default\s+)?(?=(async\s+)?(function|const|let|class)\b)/gm, '$1')
+  .replace(/^\s*export\s*\{[^}]*\};?\s*$/gm, '');
+const body = [dataJs, ...man.order.map(f => {
+  const src = read(f.file).replace(/\n$/, '');
+  return f.module ? asScript(src) : src;
+})].join('\n');
 
 const tpl = read('src/index.html');
 if (!tpl.includes('/*@@SCRIPT@@*/')) throw new Error('src/index.html lost its /*@@SCRIPT@@*/ marker');
