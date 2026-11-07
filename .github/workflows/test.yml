@@ -1,0 +1,35 @@
+name: Gates — build, tests, checks, boot, sweep
+
+# Runs every gate in docs/BUG_RUBRIC.md on every push and pull request.
+# WHY: a green status must mean the built page actually boots and plays, not
+# just that files were assembled (Blacktop's lesson). This workflow only
+# REPORTS, in the job log; it never commits, rebases or pushes (rubric §3.5).
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Playwright
+        run: |
+          set -euo pipefail
+          npm install --no-save playwright@1.49.1
+          npx playwright install --with-deps chromium
+      - name: npm test (build, unit tests, timing, data, arena, boot)
+        run: npm test
+      - name: Sweep (the whole game at random)
+        run: node tests/sweep.cjs 3 "${GITHUB_RUN_NUMBER}"
+      - name: UI audit (report mode until AUDIT_TECH.md B1 is fixed)
+        run: node tests/ui_audit.cjs --report

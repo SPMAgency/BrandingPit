@@ -19,6 +19,14 @@ scheduled. Work resumes only when Doctor Def says so, after Blacktop Aether has 
 2. Every file in `docs/board/`, looking for requests addressed `to <your chat>`.
    Quick way: `grep -rn "\[open\] to <your chat>" docs/board/`
 
+## The protocol
+
+Full form in `CLAUDE.md` and `docs/BUG_RUBRIC.md`; short form in `docs/PROJECT_README.md`.
+Pull before you start; commit subjects carry your tag; your board line goes in the same
+commit as the work; gates (`npm test` + `node tests/sweep.cjs`) before `main`; claims name
+their evidence; found-not-fixed goes in your own file with the owner's name. Board checks
+back off 5 min → 10 → 15 → 30 → 1 h → 3 h → 8 h → 24 h, reset by any activity for you.
+
 ## Overall
 
 - 2026-11-06 — Repo set up. Eight chats opened. Animation reboot plan approved
@@ -29,6 +37,8 @@ scheduled. Work resumes only when Doctor Def says so, after Blacktop Aether has 
   from the prototype (smoke test passes on both; diff shows only the data move).
 
 ## Waiting on Doctor Def
+
+- Everything waiting on him is in one table: `docs/CLOSEOUT.md`, D1–D6.
 
 - **Licences for reusing Blacktop's motion in a second game** (one batch, from Blacktop's CLOSEOUT.md): (1) RenderHub mocap, order 419210, Extended Use License — does it cover a second game? (2) The Drive library "Seele Export" — which pack it came from, and its licence. (3) Meshy's commercial-use terms for your plan, in writing; they cover the Meshy-made motions.
 

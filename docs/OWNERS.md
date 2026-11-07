@@ -8,6 +8,10 @@ creates them.
 |---|---|---|
 | `CLAUDE.md`, `docs/STATUS.md`, `docs/OWNERS.md` | Engineering | Read |
 | `docs/board/<chat>.md` | That chat | Read |
+| `docs/PROJECT_README.md`, `docs/BUG_RUBRIC.md`, `docs/AUDIT_TECH.md`, `docs/ROADMAP.md`, `docs/PLAN_SHIP.md`, `docs/CLOSEOUT.md`, `docs/LORE.md`, `docs/prompts/` | Engineering | Read; propose changes on your board file |
+| `docs/LEGAL.md` | Engineering until a Legal chat opens, then Legal | Read |
+| `docs/DEVICE_TEST_SHEET.md`, `docs/BLOCKER_CHECKS.md` | Engineering until a QA/Video chat opens, then QA/Video | Read |
+| `.github/workflows/`, `tests/smoke.cjs`, `tests/sweep.cjs`, `tests/ui_audit.cjs` | Engineering | Read |
 | `prototype/raid.html` | Engineering | Read. Frozen reference; the game now builds from `src/` |
 | `src/main.js`, `src/index.html` (page, CSS, markup), `src/manifest.json` (file order), `src/core/`, `src/ui/`, `src/render/scene.js`, `src/data/load.js`, `tools/build.mjs`, `package.json` | Engineering | Read |
 | `tests/` | Engineering | Add tests for their own files in `tests/<chat>/` |

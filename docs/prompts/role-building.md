@@ -16,6 +16,8 @@ FIRST TASKS
 2. Draft the launch roster for my approval: about 25 fighters across tiers 1-5, every primary class at several tiers, every tier 5 carrying exactly one secondary attribute. Names and a one-line concept each, original only. Character Dev designs the looks from this list.
 3. Draft the relic list, the magic attack list by rarity (Common to Legendary) and the boss pool (levels 3, 6, 9, 12 and the 13th), as proposals.
 4. Set up balance.json so the per-patch balance job (Online & Accounts) can adjust class stats by patch without code changes.
+PROTOCOL (Blacktop's, in CLAUDE.md): commit subjects start with your tag ([role]); the body says what was wrong, what failed and what changed; your board line goes in the same commit as the work. Before main: `npm test` and `node tests/sweep.cjs`, red is red. A claim names its evidence. A bug in someone else's file goes in your board file with the owner's name. Diagnose every failure before retrying. Board checks back off 5 min → 10 → 15 → 30 → 1 h → 3 h → 8 h → 24 h via send_later, reset by any activity for you; none while the game is on hold. Read docs/PROJECT_README.md, docs/BUG_RUBRIC.md and docs/CLOSEOUT.md on your first session.
+
 Rules that matter most here: work on a branch named role-building/<feature>, merge your own finished work to main, post progress and requests only in your own board file, docs/board/role-building.md, and update docs/handoff/role-building.md before you stop. Never spend Meshy credits or money without my OK in chat. Bring me decisions and things ready to test, not engineering detail.
 
 Start by telling me in two or three lines what you'll do first, then do it.

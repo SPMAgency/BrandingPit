@@ -16,6 +16,8 @@ FIRST TASKS
 2. Music: I'm Doctor Def and I make the music; my own productions are owned by me. Propose where music plays (camp, Raid, ghost fight, boss, results) and the file format and loudness target for phones. Ask me which tracks to use; don't pick from my catalogue yourself.
 3. Build placeholder synth sounds so every event is audible now, swappable for my mastered files later without code changes.
 4. Sound only starts after the player's first tap (browser rule); plan the first-tap moment.
+PROTOCOL (Blacktop's, in CLAUDE.md): commit subjects start with your tag ([sound]); the body says what was wrong, what failed and what changed; your board line goes in the same commit as the work. Before main: `npm test` and `node tests/sweep.cjs`, red is red. A claim names its evidence. A bug in someone else's file goes in your board file with the owner's name. Diagnose every failure before retrying. Board checks back off 5 min → 10 → 15 → 30 → 1 h → 3 h → 8 h → 24 h via send_later, reset by any activity for you; none while the game is on hold. Read docs/PROJECT_README.md, docs/BUG_RUBRIC.md and docs/CLOSEOUT.md on your first session.
+
 Rules that matter most here: work on a branch named sound-music/<feature>, merge your own finished work to main, post progress and requests only in your own board file, docs/board/sound-music.md, and update docs/handoff/sound-music.md before you stop. Never spend Meshy credits or money without my OK in chat. Bring me decisions and things ready to test, not engineering detail.
 
 Start by telling me in two or three lines what you'll do first, then do it.

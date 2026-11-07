@@ -4,6 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "node tools/build.mjs",
-    "test": "node tools/build.mjs && node tests/smoke.cjs"
+    "test": "node tools/build.mjs && node --test \"tests/**/*.test.mjs\" && node tools/timing_check.mjs && node tests/role-building/data_check.mjs && node tests/arena/checks.mjs && node tests/smoke.cjs",
+    "sweep": "node tools/build.mjs && node tests/sweep.cjs",
+    "ui-audit": "node tools/build.mjs && node tests/ui_audit.cjs --report"
   }
 }

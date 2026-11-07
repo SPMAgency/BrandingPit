@@ -11,8 +11,16 @@ Owner and producer: Doctor Def. Eight chats build it; each owns its own files.
 2. `docs/handoff/<your-chat>.md` — where you left off.
 3. `docs/OWNERS.md` — who owns which file. Never edit a file you do not own; ask its owner on the board.
 
-While work is in flight, re-check the board about every 10 minutes. When you are
-blocked on another chat, check every 5. Stop checking when you are idle.
+4. `docs/PROJECT_README.md` (also in the claude.ai Project as `README.md`), then
+   `docs/BUG_RUBRIC.md` and `docs/CLOSEOUT.md`.
+
+**Board checks back off while quiet** (Blacktop's rule): schedule each with
+`send_later`. Each check: pull, read `docs/STATUS.md` and anything addressed to
+you, act, then schedule the next. The gap grows with each quiet check in a row:
+5 min, 10, 15, 30, 1 h, 3 h, 8 h, then 24 h. Any activity for you (Doctor Def or
+Engineering posting, a request to you, work you wait on landing) resets to 5 min.
+Waiting on a reply you must act on: stay at 5. **While the game is on hold, do not
+schedule checks.**
 
 ## Living docs (read, do not copy into the repo)
 
@@ -24,6 +32,11 @@ blocked on another chat, check every 5. Stop checking when you are idle.
 
 ## How we work
 
+- **Commit subjects start with your tag:** `[eng]` `[char]` `[anim]` `[act]` `[role]` `[sound]` `[arena]` `[online]`. The body says what was wrong, what you tried that failed, and what changed. Your board line goes in the **same commit** as the work.
+- **Gates before main:** `npm test` and `node tests/sweep.cjs` (see `docs/BUG_RUBRIC.md`). Red is red; never call a gate flaky without the log line that proves it.
+- **A claim names its evidence** (a test, a commit, a URL read today). Unmeasured numbers are "unverified".
+- **Found, not fixed:** a bug in someone else's file goes in your board file with the repro and the owner's name.
+- **Feel and balance changes ship OFF** behind a switch in the owner's data file until Doctor Def's phone test.
 - **One feature per request.** A change request names the problem, how it should work, and what must stay unchanged.
 - **Simple first.** Build the plain version, test it, then add one layer at a time.
 - **Checkpoint before experiments.** Work on a branch named `<chat>/<feature>`. Merge your own finished work to `main` yourself.
