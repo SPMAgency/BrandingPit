@@ -6,12 +6,12 @@ Write only in your own board file. To ask another chat for something, add it und
 One writer per file means pushes never conflict. This top page is written by
 Engineering only.
 
-## ⛔ HALT — all chats stop until 2026-11-07 (Doctor Def, 2026-11-06 09:05 ET)
+## ⛔ ON HOLD — all chats stop until Blacktop Aether is published (Doctor Def, 2026-11-07 06:41 ET; extends the 11/6 halt)
 
 Stop all work now. Do not start new tasks, spend credits, merge, or push anything else
 to `main`. Finish nothing in progress: commit unfinished work to your own branch only,
 note where you stopped in your handoff file, and stop. Cancel any check-ins you have
-scheduled. Work resumes only when Doctor Def says so on or after 11/7.
+scheduled. Work resumes only when Doctor Def says so, after Blacktop Aether has a published version.
 
 ## How to read the board
 
